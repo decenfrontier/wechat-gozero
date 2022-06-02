@@ -1,4 +1,4 @@
-Name: user.rpc
+Name: user-rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 10000000  # 请求的超时时间, 毫秒
 
