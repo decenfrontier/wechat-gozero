@@ -1,0 +1,177 @@
+version: '3'
+
+######## 项目依赖的环境，启动项目之前要先启动此环境 #######
+
+services:
+  mysql:
+    # 关系型数据库
+    image: mysql:8.0.26
+    container_name: mysql_ws
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+      # root 密码
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      # 创建一个数据库
+      MYSQL_DATABASE: "ws_chat"
+    ports:
+      - 3306:3306
+    volumes:
+      # 数据挂载
+      - ./data/mysql/data:/var/lib/mysql
+      # 日志
+    command:
+      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
+      --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --explicit_defaults_for_timestamp=true --lower_case_table_names=1
+    privileged: true
+    restart: always
+
+  redis:
+    # 缓存
+    image: redis:6.2.5
+    container_name: redis_ws
+    ports:
+      - 6379:6379
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    volumes:
+      # 数据文件
+      - ./data/redis/data:/data:rw
+    command: "redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes"
+    privileged: true
+    restart: always
+
+  elasticsearch:
+    # 存储log_pilot收集的日志
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    container_name: elasticsearch
+    privileged: true
+    user: root
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  kibana:
+    # 查看elasticsearch数据
+    image: docker.elastic.co/kibana/kibana:7.13.4
+    container_name: kibana
+    environment:
+      - elasticsearch.hosts=http://elasticsearch:9200
+      - TZ=Asia/Shanghai
+    restart: always
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  log_pilot:
+    # 日志收集器
+    container_name: log_pilot
+    image: registry.cn-hangzhou.aliyuncs.com/acs-sample/log-pilot:0.9.5-filebeat
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime
+      - /:/host
+    privileged: true
+    depends_on:
+      - elasticsearch
+    environment:
+      PILOT_LOG_PREFIX: dev
+      LOGGING_OUTPUT: elasticsearch
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+
+  jaeger:
+    # 链路追踪
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    restart: always
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://elasticsearch:9200
+      - LOG_LEVEL=debug
+
+  #zookeeper是kafka的依赖
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    restart: always
+    ports:
+      - 2181:2181
+
+  #消息队列
+  kafka0:
+    image: wurstmeister/kafka
+    container_name: kafka0
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - 9093:9093
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka0
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_BROKER_ID=0
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${SERVER_IP}:9093
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
+      - TZ=Asia/Shanghai
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    
+
+  #消息队列
+  kafka1:
+    image: wurstmeister/kafka
+    container_name: kafka1
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - 9094:9094
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${SERVER_IP}:9094
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9094
+      - TZ=Asia/Shanghai
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    
+
+  # kafka管理后台
+  kafkaAdmin:
+    image: dushixiang/kafka-map:latest
+    container_name: kafkaAdmin
+    ports:
+      - 8080:8080
+    environment:
+      - DEFAULT_USERNAME=admin
+      - DEFAULT_PASSWORD=admin
+    volumes:
+      - ./data/kafka-map/data:/usr/local/kafka-map/data
+    restart: always

@@ -1,0 +1,52 @@
+type (
+	// 注册
+	RegisterRequest {
+		Email    string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required,min=6,max=16"`
+		NickName string `json:"nickName,optional" validate:"-"`                 // 可选
+		Gender   int64  `json:"gender,optional,default=0" validate:"oneof=0 1"` // 默认为0
+	}
+	RegisterResponse {
+	}
+)
+
+type (
+	// 登录
+	LoginRequest {
+		Email    string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required,min=6,max=16"`
+	}
+	LoginResponse {
+		AccessToken  string `json:"accessToken"`
+		AccessExpire int64  `json:"accessExpire"`
+	}
+)
+
+type (
+	// 个人信息
+	PersonalInfoRequest {
+	}
+	PersonalInfoResponse {
+		UserId    int64  `json:"userId"`
+		NickName  string `json:"nickName"`
+		Gender    int64  `json:"gender"`
+		Email     string `json:"email"`
+		AvatarUrl string `json:"avatarUrl"`
+	}
+)
+
+service User {
+	@handler Register
+	post /api/user/register(RegisterRequest) returns (RegisterResponse)
+	
+	@handler Login
+	post /api/user/login(LoginRequest) returns (LoginResponse)
+}
+
+@server(
+	jwt: JwtAuth
+)
+service User {
+	@handler PersonalInfo
+	post /api/user/personal_info(PersonalInfoRequest) returns (PersonalInfoResponse)
+}

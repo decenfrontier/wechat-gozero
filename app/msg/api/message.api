@@ -1,0 +1,46 @@
+type (
+	// 上传
+	UploadRequest {
+		GroupId string `json:"groupId"`
+		Type    int64  `json:"type"`
+		Content string `json:"content"`
+		Uuid    string `json:"uuid"`
+	}
+	UploadResponse {
+		Id         int64 `json:"id"`
+		CreateTime int64 `json:"createTime"`
+	}
+)
+
+type (
+	// 拉取
+	PullRequest {
+		Platform string `json:"platform"`
+		GroupId  string `json:"groupId"`
+		MaxMsgId int64  `json:"maxMsgId"`
+	}
+	ChatMsg {
+		Id         int64  `json:"id"`
+		GroupId    string `json:"groupId"`
+		SenderId   int64  `json:"senderId"`
+		Type       int64  `json:"type"`
+		Content    string `json:"content"`
+		Uuid       string `json:"uuid"`
+		CreateTime int64  `json:"createTime"`
+	}
+	PullResponse {
+		List []*ChatMsg `json:"list"`
+	}
+)
+
+@server(
+	jwt: JwtAuth
+)
+service Message {
+	@handler upload
+	post /api/message/upload(UploadRequest) returns (UploadResponse)
+	
+	@handler pull
+	post /api/message/pull(PullRequest) returns (PullResponse)
+	
+}

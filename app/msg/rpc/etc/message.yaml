@@ -1,0 +1,29 @@
+Name: message-rpc
+ListenOn: 0.0.0.0:20002
+Timeout: 10000000  # 请求的超时时间, 毫秒
+
+JwtAuth:
+  AccessSecret: ${JWT_SECRET}
+  AccessExpire: 31536000
+
+Db:
+  DataSource: root:${MYSQL_PASSWORD}@tcp(${SERVER_IP}:3306)/ws_chat?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Cache:
+- Host: ${SERVER_IP}:6379
+  Pass: ${REDIS_PASSWORD}
+  Type: node
+
+Telemetry:
+  Name: message-rpc
+  Endpoint: http://${SERVER_IP}:14268/api/traces
+  Batcher: jaeger
+
+MqConf:
+  Name: ws_chat
+  Brokers:
+    - ${SERVER_IP}:9093
+    - ${SERVER_IP}:9094
+  Topic: msg_chat
+  Group: message-rpc
+  Consumers: 1

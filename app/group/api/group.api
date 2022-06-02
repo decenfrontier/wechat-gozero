@@ -1,0 +1,70 @@
+type (
+	// 添加好友
+	AddFriendRequest {
+		UserId int64 `json:"user_id"`
+	}
+	AddFriendResponse {
+	}
+)
+
+type (
+	// 处理好友申请
+	HandleFriendRequest {
+		GroupId string `json:"groupId"`
+		IsAgree bool   `json:"isAgree"`
+	}
+	HandleFriendResponse {
+		GroupId string `json:"groupId"`
+	}
+)
+
+type (
+	// 获取群内的用户
+	GroupUserListRequest {
+		GroupId string `json:"groupId"`
+	}
+	GroupUserListResponse {
+		List []int64 `json:"list"`
+	}
+)
+
+type (
+	// 获取消息页 群组信息列表
+	MessageGroupInfoListRequest {
+	}
+	ChatMsg {
+		Id         int64  `json:"id"`
+		GroupId    string `json:"groupId"`
+		SenderId   int64  `json:"senderId"`
+		Type       int64  `json:"type"`
+		Content    string `json:"content"`
+		Uuid       string `json:"uuid"`
+		CreateTime int64  `json:"createTime"`
+	}
+	MessageGroupInfo {
+		GroupId   string   `json:"groupId"`
+		AliasName string   `json:"aliasName"`
+		AvatarUrl string   `json:"avatarUrl"`
+		LastMsg   *ChatMsg `json:"lastMsg"`
+	}
+	MessageGroupInfoListResponse {
+		List []*MessageGroupInfo `json:"list"`
+	}
+)
+
+@server(
+	jwt: JwtAuth
+)
+service Group {
+	@handler AddFriend
+	post /api/group/add_friend(AddFriendRequest) returns(AddFriendResponse)
+	
+	@handler HandleFriend
+	post /api/group/handle_friend(HandleFriendRequest) returns(HandleFriendResponse)
+	
+	@handler GroupUesrList
+	post /api/group/group_user_list(GroupUserListRequest) returns(GroupUserListResponse)
+	
+	@handler MessageGroupInfoList
+	post /api/group/message_group_info_list(MessageGroupInfoListRequest) returns(MessageGroupInfoListResponse)
+}

@@ -1,0 +1,54 @@
+syntax = "proto3";
+package group;
+option go_package = "github.com/wslynn/ws_chat/proto/group";
+
+import "github.com/wslynn/ws_chat/proto/msg/msg.proto";
+
+
+// 添加好友
+message AddFriendRequest {
+    int64 fromUid=1;
+    int64 toUid=2;
+}
+message AddFriendResponse {
+    string groupId=1;  // 返回创建的这个新群, 但是这个群还处于删除态, 不可发聊天消息
+}
+
+// 处理好友申请
+message HandleFriendRequest {
+    int64 userId=1;
+    string groupId=2;
+    bool isAgree=3;
+}
+message HandleFriendResponse {
+    string groupId=1;
+}
+
+// 获取群内的用户
+message GroupUserListRequest {
+    string groupId=1;
+}
+message GroupUserListResponse {
+    repeated int64 list=1;
+}
+
+// 获取消息页面 群组信息列表
+message MessageGroupInfoListRequest {
+    int64 userId=1;
+}
+message MessageGroupInfo {
+    string groupId=1; // 群组id (group_user表)
+    string aliasName=2; // 备注 (group_user表)
+    string avatarUrl=3; // 头像 (group表, user表)
+    msg.ChatMsg lastMsg=4; // 最后一条消息 (chat_msg表)
+}
+message MessageGroupInfoListResponse {
+    repeated MessageGroupInfo list=1;
+}
+
+service GroupClient {
+    rpc AddFriend(AddFriendRequest) returns(AddFriendResponse);
+    rpc HandleFriend(HandleFriendRequest) returns(HandleFriendResponse);
+    rpc GroupUserList(GroupUserListRequest) returns(GroupUserListResponse);
+    rpc MessageGroupInfoList(MessageGroupInfoListRequest) returns(MessageGroupInfoListResponse);
+}

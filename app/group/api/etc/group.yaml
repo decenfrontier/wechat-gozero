@@ -1,0 +1,16 @@
+Name: group-api
+Host: 0.0.0.0
+Port: 10003
+Timeout: 10000  # 请求的超时时间, 毫秒
+
+JwtAuth:
+  AccessSecret: ${JWT_SECRET}
+
+Telemetry:
+  Name: group-api
+  Endpoint: http://${SERVER_IP}:14268/api/traces
+  Batcher: jaeger
+
+GroupRpc:
+  Endpoints:
+    - 127.0.0.1:20003

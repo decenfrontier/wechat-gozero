@@ -1,0 +1,43 @@
+syntax = "proto3";
+package user;
+option go_package = "github.com/wslynn/ws_chat/proto/user";
+
+// 注册
+message RegisterRequest {
+    string email = 1;
+    string password = 2;
+    string nickName = 3;
+    int64 gender = 4;
+}
+message RegisterResponse {
+}
+
+// 登录
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+message LoginResponse {
+    string accessToken = 1;
+    int64 accessExpire = 2;
+}
+
+
+// 个人信息
+message PersonalInfoRequest {
+    int64 id = 1;
+}
+message PersonalInfoResponse {
+    int64 userId = 1;
+    string nickName = 2;
+    int64 gender = 3;
+    string email = 4;
+    string avatarUrl = 5;
+}
+
+
+service UserClient {
+    rpc Login(LoginRequest) returns(LoginResponse);
+    rpc Register(RegisterRequest) returns(RegisterResponse);
+    rpc PersonalInfo(PersonalInfoRequest) returns(PersonalInfoResponse);
+}

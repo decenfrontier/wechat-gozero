@@ -1,0 +1,16 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 10001
+Timeout: 10000000  # 请求的超时时间, 毫秒
+
+JwtAuth:
+  AccessSecret: ${JWT_SECRET}
+
+Telemetry:
+  Name: user-api
+  Endpoint: http://${SERVER_IP}:14268/api/traces
+  Batcher: jaeger
+
+UserRpc:
+  Endpoints:
+    - 127.0.0.1:20001

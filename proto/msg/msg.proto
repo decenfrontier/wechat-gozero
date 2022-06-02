@@ -1,0 +1,44 @@
+syntax = "proto3";
+package msg;
+option go_package = "github.com/wslynn/ws_chat/proto/msg";
+
+// 聊天消息结构
+message ChatMsg {
+    int64 id=1;  // 消息id
+    string groupId=2;  // 群id
+    int64 senderId=3;  // 发送者uid
+    int64 type=4;  // 消息类型 1文本, 2图片, 3视频, 4音频
+    string content=5;  // 消息内容
+    string uuid=6;  // 作用是去重
+    int64 createTime=7;  // 创建时间
+}
+
+// 上传消息
+message UploadRequest {
+    string groupId=1;
+    int64 senderId=2;
+    int64 type=3;
+    string content=4;
+    string uuid=5;
+}
+message UploadResponse {
+    int64 id=1;
+    int64 createTime=2;  // 创建时间
+}
+
+// 拉取消息
+message PullRequest {
+    int64 userId=1;  // 用户id
+    string platform=2;  // 平台号
+    string groupId=3;  // 要拉取哪个群的消息
+    int64 maxMsgId=4; // 最新的消息id(从后往前拉取)
+}
+message PullResponse {
+    repeated ChatMsg list=1;
+}
+
+
+service MessageClient {
+    rpc Upload(UploadRequest) returns(UploadResponse);
+    rpc Pull(PullRequest) returns(PullResponse);
+}
