@@ -1,4 +1,4 @@
-Name: Message
+Name: msg-api
 Host: 0.0.0.0
 Port: 10002
 Timeout: 10000000  # 请求的超时时间, 毫秒
@@ -7,11 +7,11 @@ JwtAuth:
   AccessSecret: ${JWT_SECRET}
 
 Telemetry:
-  Name: message-api
+  Name: msg-api
   Endpoint: http://${SERVER_IP}:14268/api/traces
   Batcher: jaeger
 
-MessageRpc:
+MsgRpc:
   Endpoints:
     - 127.0.0.1:20002
 
@@ -25,6 +25,6 @@ MqConf:
     - ${SERVER_IP}:9093
     - ${SERVER_IP}:9094
   Topic: msg_chat
-  Group: message-api
+  Group: msg-api
   Offset: last
   Consumers: 1

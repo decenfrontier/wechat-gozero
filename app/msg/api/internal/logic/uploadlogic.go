@@ -34,7 +34,7 @@ func (l *UploadLogic) Upload(req *types.UploadRequest) (*types.UploadResponse, e
 	}
 	userId := ctxdata.GetUidFromCtx(l.ctx)
 	pbUploadRequest.SenderId = userId
-	pbUploadResponse, err := l.svcCtx.MessageRpc.Upload(l.ctx, &pbUploadRequest)
+	pbUploadResponse, err := l.svcCtx.MsgRpc.Upload(l.ctx, &pbUploadRequest)
 	if err != nil {
 		return nil, err
 	}

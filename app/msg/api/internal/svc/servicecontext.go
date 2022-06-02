@@ -9,12 +9,12 @@ import (
 
 type ServiceContext struct {
 	Config     config.Config
-	MessageRpc messageclient.MessageClient
+	MsgRpc messageclient.MessageClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:     c,
-		MessageRpc: messageclient.NewMessageClient(zrpc.MustNewClient(c.MessageRpc)),
+		MsgRpc: messageclient.NewMessageClient(zrpc.MustNewClient(c.MsgRpc)),
 	}
 }

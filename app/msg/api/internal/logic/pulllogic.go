@@ -31,7 +31,7 @@ func (l *PullLogic) Pull(req *types.PullRequest) (*types.PullResponse, error) {
 	var pbPullRequest msg.PullRequest
 	copier.Copy(&pbPullRequest, req)
 	pbPullRequest.UserId = uid
-	pbPullResponse, err := l.svcCtx.MessageRpc.Pull(l.ctx, &pbPullRequest)
+	pbPullResponse, err := l.svcCtx.MsgRpc.Pull(l.ctx, &pbPullRequest)
 	if err != nil {
 		return nil, err
 	}
