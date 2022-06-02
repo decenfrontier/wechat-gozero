@@ -3,10 +3,11 @@ package logic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
 	"github.com/wslynn/wechat-gozero/app/user/model"
 	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
-	"github.com/wslynn/wechat-gozero/app/user/rpc/proto"
 	"github.com/wslynn/wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/proto/user"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,9 +27,9 @@ func NewPersonalInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pers
 	}
 }
 
-func (l *PersonalInfoLogic) PersonalInfo(in *proto.PersonalInfoRequest) (*proto.PersonalInfoResponse, error) {
+func (l *PersonalInfoLogic) PersonalInfo(in *user.PersonalInfoRequest) (*user.PersonalInfoResponse, error) {
 	// 查询用户是否存在
-	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
+	userModel, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.NO_DATA), "PersonalInfo user not found id:%d", in.Id)
@@ -37,16 +38,13 @@ func (l *PersonalInfoLogic) PersonalInfo(in *proto.PersonalInfoRequest) (*proto.
 		}
 	}
 	var avatarUrl string
-	if user.AvatarUrl.String != "" {
-		avatarUrl = user.AvatarUrl.String
+	if userModel.AvatarUrl.String != "" {
+		avatarUrl = userModel.AvatarUrl.String
 	} else {
 		avatarUrl = model.DefaultAvatarUrl
 	}
-	return &proto.PersonalInfoResponse{
-		UserId:    user.Id,
-		NickName:  user.NickName,
-		Gender:    user.Gender,
-		Email:     user.Email,
-		AvatarUrl: avatarUrl,
-	}, nil
+	var resp user.PersonalInfoResponse
+	copier.Copy(&resp, userModel)
+	resp.AvatarUrl = avatarUrl
+	return &resp, nil
 }

@@ -2,7 +2,7 @@ package svc
 
 import (
 	modelGroup "github.com/wslynn/wechat-gozero/app/group/model"
-	modelMsg "github.com/wslynn/wechat-gozero/app/message/model"
+	modelMsg "github.com/wslynn/wechat-gozero/app/msg/model"
 	modelUser "github.com/wslynn/wechat-gozero/app/user/model"
 	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/config"
 

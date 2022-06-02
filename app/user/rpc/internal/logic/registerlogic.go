@@ -6,7 +6,7 @@ import (
 	modelMsg "github.com/wslynn/wechat-gozero/app/msg/model"
 	"github.com/wslynn/wechat-gozero/app/user/model"
 	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
-	"github.com/wslynn/wechat-gozero/app/user/rpc/proto"
+	"github.com/wslynn/wechat-gozero/proto/user"
 	"github.com/wslynn/wechat-gozero/common/biz"
 	"github.com/wslynn/wechat-gozero/common/utils"
 	"github.com/wslynn/wechat-gozero/common/xcrypt"
@@ -31,7 +31,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResponse, error) {
+func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterResponse, error) {
 	// 查询用户是否存在
 	_, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err == nil { // 用户已存在
@@ -54,7 +54,7 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 		in.NickName = biz.RandStr(8)
 	}
 	// 创建用户
-	user := model.User{
+	userModel := model.User{
 		NickName: in.NickName,
 		Gender:   in.Gender,
 		Email:    in.Email,
@@ -63,28 +63,28 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 	// 创建事务
 	err = l.svcCtx.UserModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		// 增加用户到db
-		sqlRet, err := l.svcCtx.UserModel.TransInsert(ctx, session, &user)
+		sqlRet, err := l.svcCtx.UserModel.TransInsert(ctx, session, &userModel)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
-				"register user create failed, user:%+v, err:%v", user, err)
+				"register user create failed, user:%+v, err:%v", userModel, err)
 		}
 		user_id, err := sqlRet.LastInsertId()
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
-				"register user get uid failed, user:%+v, err:%v", user, err)
+				"register user get uid failed, user:%+v, err:%v", userModel, err)
 		}
 		// 与 微信团队, 文件传输助手, 结为好友
 		// 创建群
 		_, err = l.svcCtx.GroupModel.TransInsertSystemGroup(ctx, session, user_id)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
-				"register create system group failed, user:%+v, err: %v", user, err)
+				"register create system group failed, user:%+v, err: %v", userModel, err)
 		}
 		// 创建群用户
 		_, err = l.svcCtx.GroupUserModel.TransInsertSystemGroupUser(ctx, session, user_id)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
-				"register create system group user failed, user:%+v, err: %v", user, err)
+				"register create system group user failed, user:%+v, err: %v", userModel, err)
 		}
 		// 创建 聊天问好消息
 		var senderId int64 = 1
@@ -117,5 +117,5 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 		return nil, err
 	}
 
-	return &proto.RegisterResponse{}, nil
+	return &user.RegisterResponse{}, nil
 }
