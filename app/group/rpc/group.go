@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 
-	"wechat-gozero/app/group/rpc/internal/config"
-	"wechat-gozero/app/group/rpc/internal/server"
-	"wechat-gozero/app/group/rpc/internal/svc"
-	"wechat-gozero/app/group/rpc/proto"
-	"wechat-gozero/common/interceptor"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/config"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/server"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	"github.com/wslynn/wechat-gozero/common/interceptor"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +29,7 @@ func main() {
 	svr := server.NewGroupClientServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		proto.RegisterGroupClientServer(grpcServer, svr)
+		group.RegisterGroupClientServer(grpcServer, svr)
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

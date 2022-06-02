@@ -2,7 +2,8 @@ package xmq
 
 import (
 	"encoding/json"
-	"wechat-gozero/common/xerr"
+
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-queue/kq"

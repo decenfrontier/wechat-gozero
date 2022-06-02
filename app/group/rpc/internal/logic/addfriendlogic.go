@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"wechat-gozero/app/group/model"
-	"wechat-gozero/app/group/rpc/internal/svc"
-	"wechat-gozero/app/group/rpc/proto"
-	"wechat-gozero/common/biz"
-	"wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/app/group/model"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	"github.com/wslynn/wechat-gozero/common/biz"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +29,7 @@ func NewAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFrie
 }
 
 // 添加好友
-func (l *AddFriendLogic) AddFriend(in *proto.AddFriendRequest) (*proto.AddFriendResponse, error) {
+func (l *AddFriendLogic) AddFriend(in *group.AddFriendRequest) (*group.AddFriendResponse, error) {
 	fromUid := in.FromUid
 	toUid := in.ToUid
 	// 生成groupId
@@ -54,7 +54,7 @@ func (l *AddFriendLogic) AddFriend(in *proto.AddFriendRequest) (*proto.AddFriend
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "AddFriend insert group failed: %v", err)
 	}
-	return &proto.AddFriendResponse{
+	return &group.AddFriendResponse{
 		GroupId: groupId,
 	}, nil
 }

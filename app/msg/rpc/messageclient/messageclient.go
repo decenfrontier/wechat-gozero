@@ -6,7 +6,7 @@ package messageclient
 import (
 	"context"
 
-	"github.com/wslynn/wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/proto/msg"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

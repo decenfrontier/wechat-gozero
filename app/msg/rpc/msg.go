@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"wechat-gozero/common/interceptor"
+	"github.com/wslynn/wechat-gozero/common/interceptor"
 
 	"github.com/wslynn/wechat-gozero/app/msg/rpc/internal/config"
 	"github.com/wslynn/wechat-gozero/app/msg/rpc/internal/server"

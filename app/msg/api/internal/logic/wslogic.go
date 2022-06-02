@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"wechat-gozero/app/message/api/internal/svc"
-	"wechat-gozero/app/message/api/internal/types"
-	"wechat-gozero/common/biz"
-	"wechat-gozero/common/ctxdata"
-	"wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/app/msg/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/msg/api/internal/types"
+	"github.com/wslynn/wechat-gozero/common/biz"
+	"github.com/wslynn/wechat-gozero/common/ctxdata"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-queue/kq"

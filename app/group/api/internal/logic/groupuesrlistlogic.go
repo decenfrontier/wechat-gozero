@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/group/api/internal/svc"
-	"wechat-gozero/app/group/api/internal/types"
-	"wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/types"
+	"github.com/wslynn/wechat-gozero/proto/group"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +25,7 @@ func NewGroupUesrListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gro
 }
 
 func (l *GroupUesrListLogic) GroupUesrList(req *types.GroupUserListRequest) (*types.GroupUserListResponse, error) {
-	resp, err := l.svcCtx.GroupRpc.GroupUserList(l.ctx, &proto.GroupUserListRequest{
+	resp, err := l.svcCtx.GroupRpc.GroupUserList(l.ctx, &group.GroupUserListRequest{
 		GroupId: req.GroupId,
 	})
 	if err != nil {

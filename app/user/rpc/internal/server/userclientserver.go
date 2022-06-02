@@ -6,7 +6,7 @@ package server
 import (
 	"context"
 
-	"github.com/wslynn/wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/app/msg/rpc/proto"
 	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/logic"
 	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
 )

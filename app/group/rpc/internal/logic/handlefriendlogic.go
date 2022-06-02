@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 
-	"wechat-gozero/app/group/model"
-	"wechat-gozero/app/group/rpc/internal/svc"
-	"wechat-gozero/app/group/rpc/proto"
-	modelMsg "wechat-gozero/app/message/model"
-	"wechat-gozero/common/biz"
-	"wechat-gozero/common/utils"
-	"wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/app/group/model"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	modelMsg "github.com/wslynn/wechat-gozero/app/msg/model"
+	"github.com/wslynn/wechat-gozero/common/biz"
+	"github.com/wslynn/wechat-gozero/common/utils"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -32,17 +32,17 @@ func NewHandleFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Hand
 }
 
 // 处理好友请求
-func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.HandleFriendResponse, error) {
+func (l *HandleFriendLogic) HandleFriend(in *group.HandleFriendRequest) (*group.HandleFriendResponse, error) {
 	groupId := in.GroupId
 	uid1 := in.UserId // 同意好友申请的用户的uid
 	uid2, _ := biz.GetFriendIdFromGroupId(groupId, uid1)
 	// 先查询是否有未同意的该群
-	group, err := l.svcCtx.GroupModel.FindOne(l.ctx, groupId)
+	groupModel, err := l.svcCtx.GroupModel.FindOne(l.ctx, groupId)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "好友请求不存在"), "HandleFriend find group error, groupId:%s, err:%v", groupId, err)
 	}
-	if group.Status != model.GroupStatusNo { // 不是未同意, 则直接返回
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.CLIENT_ERROR), "HandleFriend status != 0, groupId:%s, status:%v", groupId, group.Status)
+	if groupModel.Status != model.GroupStatusNo { // 不是未同意, 则直接返回
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.CLIENT_ERROR), "HandleFriend status != 0, groupId:%s, status:%v", groupId, groupModel.Status)
 	}
 	// 查询两个用户的信息
 	u1, _ := l.svcCtx.UserModel.FindOne(l.ctx, uid1)
@@ -50,8 +50,8 @@ func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.
 	// 创建事务
 	err = l.svcCtx.GroupModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		// 把status设为1
-		group.Status = model.GroupStatusYes
-		err = l.svcCtx.GroupModel.TransUpdate(l.ctx, session, group)
+		groupModel.Status = model.GroupStatusYes
+		err = l.svcCtx.GroupModel.TransUpdate(l.ctx, session, groupModel)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "HandleFriend update group failed, groupId:%s, err:%v", groupId, err)
 		}
@@ -93,7 +93,7 @@ func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.
 		return nil, err
 	}
 
-	return &proto.HandleFriendResponse{
+	return &group.HandleFriendResponse{
 		GroupId: groupId,
 	}, nil
 }

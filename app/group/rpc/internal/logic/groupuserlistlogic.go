@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/group/rpc/internal/svc"
-	"wechat-gozero/app/group/rpc/proto"
-	"wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,13 +26,13 @@ func NewGroupUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gro
 }
 
 // 获取组内的所有用户
-func (l *GroupUserListLogic) GroupUserList(in *proto.GroupUserListRequest) (*proto.GroupUserListResponse, error) {
+func (l *GroupUserListLogic) GroupUserList(in *group.GroupUserListRequest) (*group.GroupUserListResponse, error) {
 	groupId := in.GroupId
 	groupUsers, err := l.svcCtx.GroupUserModel.FindUserIdListByGroupId(l.ctx, groupId)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "find group users error, groupId:%s, err:%v", groupId, err)
 	}
-	return &proto.GroupUserListResponse{
+	return &group.GroupUserListResponse{
 		List: groupUsers,
 	}, nil
 }

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"wechat-gozero/app/message/model"
-	"wechat-gozero/app/message/rpc/internal/svc"
-	"wechat-gozero/app/message/rpc/proto"
-	"wechat-gozero/common/xerr"
-
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"github.com/wslynn/wechat-gozero/app/msg/model"
+	"github.com/wslynn/wechat-gozero/app/msg/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/proto/msg"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,7 +29,7 @@ func NewPullLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PullLogic {
 	}
 }
 
-func (l *PullLogic) Pull(in *proto.PullRequest) (*proto.PullResponse, error) {
+func (l *PullLogic) Pull(in *msg.PullRequest) (*msg.PullResponse, error) {
 	userId := in.UserId
 	groupId := in.GroupId
 	platform := in.Platform
@@ -58,16 +58,16 @@ func (l *PullLogic) Pull(in *proto.PullRequest) (*proto.PullResponse, error) {
 			"message pull error, uid:%s,err:%v", userId, err)
 	}
 	// 组装返回值, 这里用make(xx, 0)没用, omitempty会自动忽略nil和长度为0的切片
-	var resp []*proto.ChatMsg
+	var resp []*msg.ChatMsg
 	if len(list) > 0 {
 		for _, chatMsg := range list {
-			var pbChatMsg proto.ChatMsg
+			var pbChatMsg msg.ChatMsg
 			_ = copier.Copy(&pbChatMsg, chatMsg)
 			pbChatMsg.CreateTime = chatMsg.CreateTime.UnixMilli()
 			resp = append(resp, &pbChatMsg)
 		}
 	}
-	return &proto.PullResponse{
+	return &msg.PullResponse{
 		List: resp,
 	}, nil
 }

@@ -1,8 +1,8 @@
 package svc
 
 import (
-	"wechat-gozero/app/message/model"
-	"wechat-gozero/app/message/rpc/internal/config"
+	"github.com/wslynn/wechat-gozero/app/msg/model"
+	"github.com/wslynn/wechat-gozero/app/msg/rpc/internal/config"
 
 	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/stores/redis"

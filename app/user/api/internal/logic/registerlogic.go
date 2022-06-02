@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/user/api/internal/svc"
-	"wechat-gozero/app/user/api/internal/types"
-	"wechat-gozero/app/user/rpc/userclient"
+	"github.com/wslynn/wechat-gozero/app/user/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/user/api/internal/types"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/userclient"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

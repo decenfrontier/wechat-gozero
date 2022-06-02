@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"wechat-gozero/app/user/model"
-	"wechat-gozero/app/user/rpc/internal/svc"
-	"wechat-gozero/app/user/rpc/proto"
-	"wechat-gozero/common/xcrypt"
-	"wechat-gozero/common/xerr"
-	"wechat-gozero/common/xjwt"
+	"github.com/wslynn/wechat-gozero/app/user/model"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/proto"
+	"github.com/wslynn/wechat-gozero/common/xcrypt"
+	"github.com/wslynn/wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/common/xjwt"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"

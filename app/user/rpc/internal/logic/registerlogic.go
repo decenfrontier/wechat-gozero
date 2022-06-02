@@ -3,14 +3,14 @@ package logic
 import (
 	"context"
 
-	modelMsg "wechat-gozero/app/message/model"
-	"wechat-gozero/app/user/model"
-	"wechat-gozero/app/user/rpc/internal/svc"
-	"wechat-gozero/app/user/rpc/proto"
-	"wechat-gozero/common/biz"
-	"wechat-gozero/common/utils"
-	"wechat-gozero/common/xcrypt"
-	"wechat-gozero/common/xerr"
+	modelMsg "github.com/wslynn/wechat-gozero/app/msg/model"
+	"github.com/wslynn/wechat-gozero/app/user/model"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/proto"
+	"github.com/wslynn/wechat-gozero/common/biz"
+	"github.com/wslynn/wechat-gozero/common/utils"
+	"github.com/wslynn/wechat-gozero/common/xcrypt"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"

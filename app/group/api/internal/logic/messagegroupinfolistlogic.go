@@ -3,11 +3,11 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/group/api/internal/svc"
-	"wechat-gozero/app/group/api/internal/types"
-	"wechat-gozero/app/group/rpc/proto"
-	"wechat-gozero/common/ctxdata"
-	"wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/types"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	"github.com/wslynn/wechat-gozero/common/ctxdata"
+	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +29,7 @@ func NewMessageGroupInfoListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *MessageGroupInfoListLogic) MessageGroupInfoList(req *types.MessageGroupInfoListRequest) (*types.MessageGroupInfoListResponse, error) {
 	uid := ctxdata.GetUidFromCtx(l.ctx)
-	resp, err := l.svcCtx.GroupRpc.MessageGroupInfoList(l.ctx, &proto.MessageGroupInfoListRequest{
+	resp, err := l.svcCtx.GroupRpc.MessageGroupInfoList(l.ctx, &group.MessageGroupInfoListRequest{
 		UserId: uid,
 	})
 	if err != nil {

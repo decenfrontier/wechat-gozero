@@ -6,23 +6,22 @@ package groupclient
 import (
 	"context"
 
-	"wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/proto/group"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	AddFriendRequest             = proto.AddFriendRequest
-	AddFriendResponse            = proto.AddFriendResponse
-	ChatMsg                      = proto.ChatMsg
-	GroupUserListRequest         = proto.GroupUserListRequest
-	GroupUserListResponse        = proto.GroupUserListResponse
-	HandleFriendRequest          = proto.HandleFriendRequest
-	HandleFriendResponse         = proto.HandleFriendResponse
-	MessageGroupInfo             = proto.MessageGroupInfo
-	MessageGroupInfoListRequest  = proto.MessageGroupInfoListRequest
-	MessageGroupInfoListResponse = proto.MessageGroupInfoListResponse
+	AddFriendRequest             = group.AddFriendRequest
+	AddFriendResponse            = group.AddFriendResponse
+	GroupUserListRequest         = group.GroupUserListRequest
+	GroupUserListResponse        = group.GroupUserListResponse
+	HandleFriendRequest          = group.HandleFriendRequest
+	HandleFriendResponse         = group.HandleFriendResponse
+	MessageGroupInfo             = group.MessageGroupInfo
+	MessageGroupInfoListRequest  = group.MessageGroupInfoListRequest
+	MessageGroupInfoListResponse = group.MessageGroupInfoListResponse
 
 	GroupClient interface {
 		AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error)
@@ -43,21 +42,21 @@ func NewGroupClient(cli zrpc.Client) GroupClient {
 }
 
 func (m *defaultGroupClient) AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error) {
-	client := proto.NewGroupClientClient(m.cli.Conn())
+	client := group.NewGroupClientClient(m.cli.Conn())
 	return client.AddFriend(ctx, in, opts...)
 }
 
 func (m *defaultGroupClient) HandleFriend(ctx context.Context, in *HandleFriendRequest, opts ...grpc.CallOption) (*HandleFriendResponse, error) {
-	client := proto.NewGroupClientClient(m.cli.Conn())
+	client := group.NewGroupClientClient(m.cli.Conn())
 	return client.HandleFriend(ctx, in, opts...)
 }
 
 func (m *defaultGroupClient) GroupUserList(ctx context.Context, in *GroupUserListRequest, opts ...grpc.CallOption) (*GroupUserListResponse, error) {
-	client := proto.NewGroupClientClient(m.cli.Conn())
+	client := group.NewGroupClientClient(m.cli.Conn())
 	return client.GroupUserList(ctx, in, opts...)
 }
 
 func (m *defaultGroupClient) MessageGroupInfoList(ctx context.Context, in *MessageGroupInfoListRequest, opts ...grpc.CallOption) (*MessageGroupInfoListResponse, error) {
-	client := proto.NewGroupClientClient(m.cli.Conn())
+	client := group.NewGroupClientClient(m.cli.Conn())
 	return client.MessageGroupInfoList(ctx, in, opts...)
 }

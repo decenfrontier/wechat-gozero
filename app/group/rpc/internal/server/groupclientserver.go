@@ -6,14 +6,14 @@ package server
 import (
 	"context"
 
-	"wechat-gozero/app/group/rpc/internal/logic"
-	"wechat-gozero/app/group/rpc/internal/svc"
-	"wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/logic"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/proto/group"
 )
 
 type GroupClientServer struct {
 	svcCtx *svc.ServiceContext
-	proto.UnimplementedGroupClientServer
+	group.UnimplementedGroupClientServer
 }
 
 func NewGroupClientServer(svcCtx *svc.ServiceContext) *GroupClientServer {
@@ -22,22 +22,22 @@ func NewGroupClientServer(svcCtx *svc.ServiceContext) *GroupClientServer {
 	}
 }
 
-func (s *GroupClientServer) AddFriend(ctx context.Context, in *proto.AddFriendRequest) (*proto.AddFriendResponse, error) {
+func (s *GroupClientServer) AddFriend(ctx context.Context, in *group.AddFriendRequest) (*group.AddFriendResponse, error) {
 	l := logic.NewAddFriendLogic(ctx, s.svcCtx)
 	return l.AddFriend(in)
 }
 
-func (s *GroupClientServer) HandleFriend(ctx context.Context, in *proto.HandleFriendRequest) (*proto.HandleFriendResponse, error) {
+func (s *GroupClientServer) HandleFriend(ctx context.Context, in *group.HandleFriendRequest) (*group.HandleFriendResponse, error) {
 	l := logic.NewHandleFriendLogic(ctx, s.svcCtx)
 	return l.HandleFriend(in)
 }
 
-func (s *GroupClientServer) GroupUserList(ctx context.Context, in *proto.GroupUserListRequest) (*proto.GroupUserListResponse, error) {
+func (s *GroupClientServer) GroupUserList(ctx context.Context, in *group.GroupUserListRequest) (*group.GroupUserListResponse, error) {
 	l := logic.NewGroupUserListLogic(ctx, s.svcCtx)
 	return l.GroupUserList(in)
 }
 
-func (s *GroupClientServer) MessageGroupInfoList(ctx context.Context, in *proto.MessageGroupInfoListRequest) (*proto.MessageGroupInfoListResponse, error) {
+func (s *GroupClientServer) MessageGroupInfoList(ctx context.Context, in *group.MessageGroupInfoListRequest) (*group.MessageGroupInfoListResponse, error) {
 	l := logic.NewMessageGroupInfoListLogic(ctx, s.svcCtx)
 	return l.MessageGroupInfoList(in)
 }

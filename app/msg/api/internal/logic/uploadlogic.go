@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/message/api/internal/svc"
-	"wechat-gozero/app/message/api/internal/types"
-	"wechat-gozero/app/message/rpc/proto"
-	"wechat-gozero/common/ctxdata"
+	"github.com/wslynn/wechat-gozero/app/msg/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/msg/api/internal/types"
+	"github.com/wslynn/wechat-gozero/proto/msg"
+	"github.com/wslynn/wechat-gozero/common/ctxdata"
 
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +27,7 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 }
 
 func (l *UploadLogic) Upload(req *types.UploadRequest) (*types.UploadResponse, error) {
-	var pbUploadRequest proto.UploadRequest
+	var pbUploadRequest msg.UploadRequest
 	err := copier.Copy(&pbUploadRequest, req)
 	if err != nil {
 		return nil, err

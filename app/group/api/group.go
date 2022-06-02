@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 
-	"wechat-gozero/app/group/api/internal/config"
-	"wechat-gozero/app/group/api/internal/handler"
-	"wechat-gozero/app/group/api/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/config"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/handler"
+	"github.com/wslynn/wechat-gozero/app/group/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"

@@ -3,14 +3,14 @@ package logic
 import (
 	"context"
 
-	"wechat-gozero/app/message/model"
-	"wechat-gozero/app/message/rpc/internal/svc"
-	"wechat-gozero/app/message/rpc/proto"
-	"wechat-gozero/common/xerr"
-	"wechat-gozero/common/xmq"
-
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"github.com/wslynn/wechat-gozero/app/msg/model"
+	"github.com/wslynn/wechat-gozero/app/msg/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/common/xmq"
+	"github.com/wslynn/wechat-gozero/proto/msg"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -29,8 +29,8 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 	}
 }
 
-func (l *UploadLogic) Upload(in *proto.UploadRequest) (*proto.UploadResponse, error) {
-	msg := &model.ChatMsg{
+func (l *UploadLogic) Upload(in *msg.UploadRequest) (*msg.UploadResponse, error) {
+	chatMsg := &model.ChatMsg{
 		GroupId:  in.GroupId,
 		SenderId: in.SenderId,
 		Type:     in.Type,
@@ -40,28 +40,28 @@ func (l *UploadLogic) Upload(in *proto.UploadRequest) (*proto.UploadResponse, er
 
 	err := l.svcCtx.ChatMsgModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		// 存到数据库
-		ret, err := l.svcCtx.ChatMsgModel.TransInsert(l.ctx, session, msg)
+		ret, err := l.svcCtx.ChatMsgModel.TransInsert(l.ctx, session, chatMsg)
 		if err != nil {
-			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "消息uuid已存在"), "insert message failed, msg: %+v", msg)
+			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "消息uuid已存在"), "insert message failed, msg: %+v", chatMsg)
 		}
-		msg.Id, err = ret.LastInsertId()
+		chatMsg.Id, err = ret.LastInsertId()
 		if err != nil {
-			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "获取消息id失败"), "get message id failed, msg: %+v", msg)
+			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "获取消息id失败"), "get message id failed, msg: %+v", chatMsg)
 		}
-		dbMsg, err := l.svcCtx.ChatMsgModel.TransFindOne(l.ctx, session, msg.Id)
+		dbMsg, err := l.svcCtx.ChatMsgModel.TransFindOne(l.ctx, session, chatMsg.Id)
 		if err != nil {
-			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "获取消息失败"), "get message failed, msg: %+v", msg)
+			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "获取消息失败"), "get message failed, msg: %+v", chatMsg)
 		}
 		// 放入消息队列
-		var mqMsg proto.ChatMsg
+		var mqMsg msg.ChatMsg
 		copier.Copy(&mqMsg, dbMsg)
 		mqMsg.CreateTime = dbMsg.CreateTime.UnixMilli()
-		msg.CreateTime = dbMsg.CreateTime
+		chatMsg.CreateTime = dbMsg.CreateTime
 		err = xmq.PushToMq(l.svcCtx.MqProducer, &mqMsg)
 		if err != nil {
-			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.MQ_ERROR, "消息推送失败"), "push message to mq failed, msg: %+v", msg)
+			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.MQ_ERROR, "消息推送失败"), "push message to mq failed, msg: %+v", chatMsg)
 		}
-		logx.Infof("push to mq msg: %+v", msg)
+		logx.Infof("push to mq msg: %+v", chatMsg)
 		// commit
 		return nil
 	})
@@ -69,8 +69,8 @@ func (l *UploadLogic) Upload(in *proto.UploadRequest) (*proto.UploadResponse, er
 		return nil, err
 	}
 
-	return &proto.UploadResponse{
-		Id:         msg.Id,
-		CreateTime: msg.CreateTime.UnixMilli(),
+	return &msg.UploadResponse{
+		Id:         chatMsg.Id,
+		CreateTime: chatMsg.CreateTime.UnixMilli(),
 	}, nil
 }
