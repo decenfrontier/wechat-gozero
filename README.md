@@ -1,47 +1,28 @@
-# wechat-gozero即时通信系统
+# wechat-gozero
 
 ![Go](https://img.shields.io/badge/Go-1.18-blue.svg)
-![go-zero](https://img.shields.io/badge/go_zero-1.3.3-blue.svg)
+![go-zero](https://img.shields.io/badge/go_zero-1.3.3-blue.svg) 
+![goctl](https://img.shields.io/badge/goctl-1.3.5-blue.svg)
 ![star](https://img.shields.io/github/stars/wslynn/wechat-gozero?style=social)
 
 
 ## 1 项目简介
+本项目的目标是利用websocket, kafka等技术, 模仿微信UI开发一个IM系统, 实现消息单聊, 群聊, 在线推送, 离线拉取等功能
 
-个人出于兴趣做的开源项目，目标是实现一个类似于微信的即时通信软件!
+为了提升开发和重构效率，后端使用go-zero微服务框架。
 
-项目正在稳定开发中, 敬请期待...
+为了一套代码支持全平台和便捷的状态管理，前端使用Flutter+GetX开发。
 
-为了一套代码支持全平台，前端使用Flutter+GetX开发。
-
-为了稳定可扩展，后端使用了集成了众多工程最佳实践的go-zero微服务框架。
+都是比较新的技术栈, 网上参考资料不多, 一步步做到现在不容易, 欢迎大家点个star, 有时间会更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
 
 
 ## 2 相关开源地址
 后端开源地址：https://github.com/wslynn/wechat-gozero
 
-前端开源地址：https://github.com/wslynn/wechat-gozero_flutter
+前端开源地址：https://github.com/wslynn/wechat-flutter
 
 
 ## 3 架构图及文档
 [语雀在线文档](https://www.yuque.com/docs/share/77c846d2-51f8-4a25-8330-fa036a8a4cbe)
 
 [![OZycv9.png](https://s1.ax1x.com/2022/05/05/OZycv9.png)](https://imgtu.com/i/OZycv9)
-
-
-## 4 modd (hot reload)
-### (1) 下载modd
-> go install github.com/cortesi/modd/cmd/modd
-### (2) 写配置文件modd.conf
-```conf
-# user
-app/user/rpc/**/*.go {
-    prep: go build -o ./bin/user-rpc  -v app/user/rpc/user.go
-    daemon +sigkill: ./bin/user-rpc -f app/user/rpc/etc/user.yaml
-}
-app/user/api/**/*.go {
-    prep: go build -o ./bin/user-api  -v app/user/api/user.go
-    daemon +sigkill: ./bin/user-api -f app/user/api/etc/user.yaml
-}
-```
-### (3) 运行modd
-> root@tencent:~/code/wechat-gozero (master) # modd
