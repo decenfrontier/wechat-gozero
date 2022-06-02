@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/pkg/errors v0.9.1
+	github.com/wslynn/wechat-gozero/proto v0.0.0-20220602084218-fef86a0e3e36
 	github.com/zeromicro/go-queue v1.1.5
 	github.com/zeromicro/go-zero v1.3.3
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
