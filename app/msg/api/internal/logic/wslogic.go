@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"ws_chat/app/message/api/internal/svc"
-	"ws_chat/app/message/api/internal/types"
-	"ws_chat/common/biz"
-	"ws_chat/common/ctxdata"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/message/api/internal/svc"
+	"wechat-gozero/app/message/api/internal/types"
+	"wechat-gozero/common/biz"
+	"wechat-gozero/common/ctxdata"
+	"wechat-gozero/common/xerr"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-queue/kq"
@@ -23,6 +23,7 @@ var lock sync.Mutex
 
 // 存放groupId和group的映射关系
 var groupMap = make(map[string]*Group)
+
 // 存放group下的所有在线用户, groupId:[]*Client
 var groupUserMap sync.Map
 
@@ -71,7 +72,7 @@ func GetInstanceGroup(groupId string) *Group {
 		if groupMap[groupId] == nil {
 			// 开始创建实例时, 一般是该群有新消息上传
 			group = &Group{
-				id: groupId,
+				id:            groupId,
 				onlineClients: make(map[*Client]bool),
 				broadcast:     make(chan []byte),
 				onEnter:       make(chan *Client),
@@ -84,7 +85,7 @@ func GetInstanceGroup(groupId string) *Group {
 					group.onEnter <- client
 				}
 			}
-			go group.Run()  // 只在创建时运行, 可以保证只运行一次
+			go group.Run() // 只在创建时运行, 可以保证只运行一次
 		}
 	}
 	return group
@@ -106,7 +107,7 @@ func (g *Group) Run() {
 			if _, ok := g.onlineClients[client]; ok {
 				delete(g.onlineClients, client)
 				close(client.onSend)
-				// 群聊中没有人在线, 
+				// 群聊中没有人在线,
 				if len(g.onlineClients) == 0 {
 					return
 				}
@@ -191,7 +192,7 @@ func (c *Client) writePump() {
 
 	for {
 		select {
-		case message, ok := <-c.onSend:  // 发送消息
+		case message, ok := <-c.onSend: // 发送消息
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -213,7 +214,7 @@ func (c *Client) writePump() {
 			if err := w.Close(); err != nil {
 				return
 			}
-		case <-ticker.C:  // 每隔一段时间向客户端发送一个心跳包
+		case <-ticker.C: // 每隔一段时间向客户端发送一个心跳包
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
@@ -241,12 +242,12 @@ func ServeWs(svc *svc.ServiceContext, w http.ResponseWriter, r *http.Request) er
 	idPlatform := fmt.Sprintf("%d_%s", uid, platform)
 	client := &Client{
 		idPlatform: idPlatform,
-		groupMap: map[string]*Group{groupId: group},
-		conn:     conn,
-		onSend:   make(chan []byte, bufSize),
+		groupMap:   map[string]*Group{groupId: group},
+		conn:       conn,
+		onSend:     make(chan []byte, bufSize),
 	}
 
-	logx.Infof("客户端连接, client:%+v",client)
+	logx.Infof("客户端连接, client:%+v", client)
 	// 用户进入群组
 	group.onEnter <- client
 

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"ws_chat/app/message/model"
-	"ws_chat/app/message/rpc/internal/svc"
-	"ws_chat/app/message/rpc/proto"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/message/model"
+	"wechat-gozero/app/message/rpc/internal/svc"
+	"wechat-gozero/app/message/rpc/proto"
+	"wechat-gozero/common/xerr"
 
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -33,13 +33,13 @@ func (l *PullLogic) Pull(in *proto.PullRequest) (*proto.PullResponse, error) {
 	userId := in.UserId
 	groupId := in.GroupId
 	platform := in.Platform
-	maxMsgId := in.MaxMsgId  // 最新的msgId
+	maxMsgId := in.MaxMsgId // 最新的msgId
 	// 上次收到在线消息的位置, 没有则为0
 	var lastMsgId int64
 	// 先查询缓存的last_msg_id
 	cache_key := fmt.Sprintf("%d:%s:%s", userId, platform, groupId)
 	cache_val, err := l.svcCtx.RedisClient.Get(cache_key)
-	if err == nil {  // 若查到上次收到在线消息的位置
+	if err == nil { // 若查到上次收到在线消息的位置
 		lastMsgId, err = strconv.ParseInt(cache_val, 10, 64)
 		if err != nil {
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SERVER_ERROR),

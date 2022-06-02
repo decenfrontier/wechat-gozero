@@ -1,8 +1,8 @@
 syntax = "proto3";
 package group;
-option go_package = "github.com/wslynn/ws_chat/proto/group";
+option go_package = "github.com/wslynn/wechat-gozero/proto/group";
 
-import "github.com/wslynn/ws_chat/proto/msg/msg.proto";
+import "github.com/wslynn/wechat-gozero/proto/msg/msg.proto";
 
 
 // 添加好友

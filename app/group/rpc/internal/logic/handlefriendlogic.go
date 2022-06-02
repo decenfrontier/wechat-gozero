@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 
-	"ws_chat/app/group/model"
-	"ws_chat/app/group/rpc/internal/svc"
-	"ws_chat/app/group/rpc/proto"
-	modelMsg "ws_chat/app/message/model"
-	"ws_chat/common/biz"
-	"ws_chat/common/utils"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/group/model"
+	"wechat-gozero/app/group/rpc/internal/svc"
+	"wechat-gozero/app/group/rpc/proto"
+	modelMsg "wechat-gozero/app/message/model"
+	"wechat-gozero/common/biz"
+	"wechat-gozero/common/utils"
+	"wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,14 +34,14 @@ func NewHandleFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Hand
 // 处理好友请求
 func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.HandleFriendResponse, error) {
 	groupId := in.GroupId
-	uid1 := in.UserId  // 同意好友申请的用户的uid
+	uid1 := in.UserId // 同意好友申请的用户的uid
 	uid2, _ := biz.GetFriendIdFromGroupId(groupId, uid1)
 	// 先查询是否有未同意的该群
 	group, err := l.svcCtx.GroupModel.FindOne(l.ctx, groupId)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCodeMsg(xerr.DB_ERROR, "好友请求不存在"), "HandleFriend find group error, groupId:%s, err:%v", groupId, err)
 	}
-	if group.Status != model.GroupStatusNo {  // 不是未同意, 则直接返回
+	if group.Status != model.GroupStatusNo { // 不是未同意, 则直接返回
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.CLIENT_ERROR), "HandleFriend status != 0, groupId:%s, status:%v", groupId, group.Status)
 	}
 	// 查询两个用户的信息
@@ -57,8 +57,8 @@ func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.
 		}
 		// 创建群内用户
 		groupUser1 := &model.GroupUser{
-			GroupId: groupId,
-			UserId: uid1,
+			GroupId:   groupId,
+			UserId:    uid1,
 			AliasName: sql.NullString{String: u2.NickName, Valid: true},
 		}
 		_, err = l.svcCtx.GroupUserModel.TransInsert(l.ctx, session, groupUser1)
@@ -66,8 +66,8 @@ func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "HandleFriend insert group user failed, groupUser:%+v, err:%v", groupUser1, err)
 		}
 		groupUser2 := &model.GroupUser{
-			GroupId: groupId,
-			UserId: uid2,
+			GroupId:   groupId,
+			UserId:    uid2,
 			AliasName: sql.NullString{String: u1.NickName, Valid: true},
 		}
 		_, err = l.svcCtx.GroupUserModel.TransInsert(l.ctx, session, groupUser2)
@@ -76,23 +76,23 @@ func (l *HandleFriendLogic) HandleFriend(in *proto.HandleFriendRequest) (*proto.
 		}
 		// 创建sayHello消息
 		chatMsg := &modelMsg.ChatMsg{
-			GroupId: groupId,
+			GroupId:  groupId,
 			SenderId: uid1,
-			Type: modelMsg.MsgTypeText,
-			Content: modelMsg.MsgSayHello,
-			Uuid: utils.GenUuid(),
+			Type:     modelMsg.MsgTypeText,
+			Content:  modelMsg.MsgSayHello,
+			Uuid:     utils.GenUuid(),
 		}
 		_, err = l.svcCtx.ChatMsgModel.TransInsert(ctx, session, chatMsg)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
 				"HandleFriend say hello failed, chatMsg:%+v, err: %v", chatMsg, err)
 		}
-		return nil  // commit
+		return nil // commit
 	})
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &proto.HandleFriendResponse{
 		GroupId: groupId,
 	}, nil

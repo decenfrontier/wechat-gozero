@@ -6,7 +6,7 @@ package userclient
 import (
 	"context"
 
-	"github.com/wslynn/ws_chat/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/proto"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

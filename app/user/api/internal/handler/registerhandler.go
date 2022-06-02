@@ -2,10 +2,10 @@ package handler
 
 import (
 	"net/http"
-	"ws_chat/app/user/api/internal/logic"
-	"ws_chat/app/user/api/internal/svc"
-	"ws_chat/app/user/api/internal/types"
-	"ws_chat/common/xresp"
+	"wechat-gozero/app/user/api/internal/logic"
+	"wechat-gozero/app/user/api/internal/svc"
+	"wechat-gozero/app/user/api/internal/types"
+	"wechat-gozero/common/xresp"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )

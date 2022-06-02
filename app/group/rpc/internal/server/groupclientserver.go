@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"ws_chat/app/group/rpc/internal/logic"
-	"ws_chat/app/group/rpc/internal/svc"
-	"ws_chat/app/group/rpc/proto"
+	"wechat-gozero/app/group/rpc/internal/logic"
+	"wechat-gozero/app/group/rpc/internal/svc"
+	"wechat-gozero/app/group/rpc/proto"
 )
 
 type GroupClientServer struct {

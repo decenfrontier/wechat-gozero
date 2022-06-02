@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 
-	"ws_chat/app/user/model"
-	"ws_chat/app/user/rpc/internal/svc"
-	"ws_chat/app/user/rpc/proto"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/user/model"
+	"wechat-gozero/app/user/rpc/internal/svc"
+	"wechat-gozero/app/user/rpc/proto"
+	"wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,10 +43,10 @@ func (l *PersonalInfoLogic) PersonalInfo(in *proto.PersonalInfoRequest) (*proto.
 		avatarUrl = model.DefaultAvatarUrl
 	}
 	return &proto.PersonalInfoResponse{
-		UserId:   user.Id,
-		NickName: user.NickName,
-		Gender:   user.Gender,
-		Email:    user.Email,
+		UserId:    user.Id,
+		NickName:  user.NickName,
+		Gender:    user.Gender,
+		Email:     user.Email,
 		AvatarUrl: avatarUrl,
 	}, nil
 }

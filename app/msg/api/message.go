@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"ws_chat/app/message/api/internal/config"
-	"ws_chat/app/message/api/internal/handler"
-	"ws_chat/app/message/api/internal/logic"
-	"ws_chat/app/message/api/internal/svc"
-	"ws_chat/common/xresp"
+	"wechat-gozero/app/message/api/internal/config"
+	"wechat-gozero/app/message/api/internal/handler"
+	"wechat-gozero/app/message/api/internal/logic"
+	"wechat-gozero/app/message/api/internal/svc"
+	"wechat-gozero/common/xresp"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"

@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 
-	"ws_chat/app/user/rpc/internal/config"
-	"ws_chat/app/user/rpc/internal/server"
-	"ws_chat/app/user/rpc/internal/svc"
-	"ws_chat/app/user/rpc/proto"
-	"ws_chat/common/interceptor"
+	"wechat-gozero/app/user/rpc/internal/config"
+	"wechat-gozero/app/user/rpc/internal/server"
+	"wechat-gozero/app/user/rpc/internal/svc"
+	"wechat-gozero/app/user/rpc/proto"
+	"wechat-gozero/common/interceptor"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"

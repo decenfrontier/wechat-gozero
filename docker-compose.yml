@@ -13,7 +13,7 @@ services:
       # root 密码
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       # 创建一个数据库
-      MYSQL_DATABASE: "ws_chat"
+      MYSQL_DATABASE: "wechat-gozero"
     ports:
       - 3306:3306
     volumes:

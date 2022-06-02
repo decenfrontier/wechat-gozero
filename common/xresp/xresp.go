@@ -2,11 +2,12 @@ package xresp
 
 import (
 	"net/http"
-	"ws_chat/common/xerr"
+	"wechat-gozero/common/xerr"
 
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
+
 	// en_translation "github.com/go-playground/validator/v10/translations/en"
 	"github.com/go-playground/validator/v10"
 	zh_translation "github.com/go-playground/validator/v10/translations/zh"

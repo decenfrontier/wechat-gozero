@@ -1,4 +1,4 @@
-module github.com/wslynn/ws_chat
+module github.com/wslynn/wechat-gozero
 
 go 1.18
 

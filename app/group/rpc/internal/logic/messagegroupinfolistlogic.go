@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	modelUser "ws_chat/app/user/model"
-	"ws_chat/app/group/model"
-	"ws_chat/app/group/rpc/internal/svc"
-	"ws_chat/app/group/rpc/proto"
-	"ws_chat/common/biz"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/group/model"
+	"wechat-gozero/app/group/rpc/internal/svc"
+	"wechat-gozero/app/group/rpc/proto"
+	modelUser "wechat-gozero/app/user/model"
+	"wechat-gozero/common/biz"
+	"wechat-gozero/common/xerr"
 
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"

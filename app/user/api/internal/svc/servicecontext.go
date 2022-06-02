@@ -1,8 +1,8 @@
 package svc
 
 import (
-	"ws_chat/app/user/api/internal/config"
-	"ws_chat/app/user/rpc/userclient"
+	"wechat-gozero/app/user/api/internal/config"
+	"wechat-gozero/app/user/rpc/userclient"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )

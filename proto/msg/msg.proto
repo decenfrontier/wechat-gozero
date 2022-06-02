@@ -1,6 +1,6 @@
 syntax = "proto3";
 package msg;
-option go_package = "github.com/wslynn/ws_chat/proto/msg";
+option go_package = "github.com/wslynn/wechat-gozero/proto/msg";
 
 // 聊天消息结构
 message ChatMsg {

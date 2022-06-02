@@ -3,11 +3,11 @@ package logic
 import (
 	"context"
 
-	"ws_chat/app/message/model"
-	"ws_chat/app/message/rpc/internal/svc"
-	"ws_chat/app/message/rpc/proto"
-	"ws_chat/common/xerr"
-	"ws_chat/common/xmq"
+	"wechat-gozero/app/message/model"
+	"wechat-gozero/app/message/rpc/internal/svc"
+	"wechat-gozero/app/message/rpc/proto"
+	"wechat-gozero/common/xerr"
+	"wechat-gozero/common/xmq"
 
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -31,11 +31,11 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 
 func (l *UploadLogic) Upload(in *proto.UploadRequest) (*proto.UploadResponse, error) {
 	msg := &model.ChatMsg{
-		GroupId: in.GroupId,
+		GroupId:  in.GroupId,
 		SenderId: in.SenderId,
-		Type: in.Type,
-		Content: in.Content,
-		Uuid: in.Uuid,
+		Type:     in.Type,
+		Content:  in.Content,
+		Uuid:     in.Uuid,
 	}
 
 	err := l.svcCtx.ChatMsgModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -70,7 +70,7 @@ func (l *UploadLogic) Upload(in *proto.UploadRequest) (*proto.UploadResponse, er
 	}
 
 	return &proto.UploadResponse{
-		Id: msg.Id,
+		Id:         msg.Id,
 		CreateTime: msg.CreateTime.UnixMilli(),
 	}, nil
 }

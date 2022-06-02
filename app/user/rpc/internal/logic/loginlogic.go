@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"ws_chat/app/user/model"
-	"ws_chat/app/user/rpc/internal/svc"
-	"ws_chat/app/user/rpc/proto"
-	"ws_chat/common/xcrypt"
-	"ws_chat/common/xerr"
-	"ws_chat/common/xjwt"
+	"wechat-gozero/app/user/model"
+	"wechat-gozero/app/user/rpc/internal/svc"
+	"wechat-gozero/app/user/rpc/proto"
+	"wechat-gozero/common/xcrypt"
+	"wechat-gozero/common/xerr"
+	"wechat-gozero/common/xjwt"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"

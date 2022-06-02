@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"ws_chat/common/biz"
+	"wechat-gozero/common/biz"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -36,7 +36,6 @@ func NewGroupUserModel(conn sqlx.SqlConn, c cache.CacheConf) GroupUserModel {
 	}
 }
 
-
 func (m *defaultGroupUserModel) FindUserListByGroupId(ctx context.Context, groupId string) ([]*GroupUser, error) {
 	query := fmt.Sprintf("select %s from %s where `group_id` = ?", groupUserRows, m.table)
 	var resp []*GroupUser
@@ -66,8 +65,6 @@ func (m *defaultGroupUserModel) FindGroupIdListByUserId(ctx context.Context, use
 	}
 	return resp, nil
 }
-
-
 
 // 添加系统用户 组用户
 func (m *defaultGroupUserModel) TransInsertSystemGroupUser(ctx context.Context, session sqlx.Session, userId int64) (sql.Result, error) {

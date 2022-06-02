@@ -7,7 +7,7 @@ JwtAuth:
   AccessExpire: 31536000
 
 Db:
-  DataSource: root:${MYSQL_PASSWORD}@tcp(${SERVER_IP}:3306)/ws_chat?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:${MYSQL_PASSWORD}@tcp(${SERVER_IP}:3306)/wechat-gozero?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
 CacheRedis:
 - Host: ${SERVER_IP}:6379

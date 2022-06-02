@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 
-	"ws_chat/app/group/api/internal/svc"
-	"ws_chat/app/group/api/internal/types"
-	"ws_chat/app/group/rpc/proto"
-	"ws_chat/common/ctxdata"
+	"wechat-gozero/app/group/api/internal/svc"
+	"wechat-gozero/app/group/api/internal/types"
+	"wechat-gozero/app/group/rpc/proto"
+	"wechat-gozero/common/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +29,7 @@ func (l *AddFriendLogic) AddFriend(req *types.AddFriendRequest) (*types.AddFrien
 	uid := ctxdata.GetUidFromCtx(l.ctx)
 	_, err := l.svcCtx.GroupRpc.AddFriend(l.ctx, &proto.AddFriendRequest{
 		FromUid: uid,
-		ToUid: req.UserId,
+		ToUid:   req.UserId,
 	})
 	if err != nil {
 		return nil, err

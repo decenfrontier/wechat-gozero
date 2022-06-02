@@ -3,12 +3,13 @@ package handler
 import (
 	"net/http"
 
-	"ws_chat/common/xresp"
+	"wechat-gozero/common/xresp"
+
+	"wechat-gozero/app/message/api/internal/logic"
+	"wechat-gozero/app/message/api/internal/svc"
+	"wechat-gozero/app/message/api/internal/types"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"ws_chat/app/message/api/internal/logic"
-	"ws_chat/app/message/api/internal/svc"
-	"ws_chat/app/message/api/internal/types"
 )
 
 func uploadHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

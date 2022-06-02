@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 
-	"ws_chat/app/group/rpc/internal/svc"
-	"ws_chat/app/group/rpc/proto"
-	"ws_chat/common/xerr"
+	"wechat-gozero/app/group/rpc/internal/svc"
+	"wechat-gozero/app/group/rpc/proto"
+	"wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"

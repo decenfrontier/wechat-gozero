@@ -20,7 +20,7 @@ GroupRpc:
     - 127.0.0.1:20003
 
 MqConf:
-  Name: ws_chat
+  Name: wechat-gozero
   Brokers:
     - ${SERVER_IP}:9093
     - ${SERVER_IP}:9094

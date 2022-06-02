@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 
-	"ws_chat/app/group/api/internal/svc"
-	"ws_chat/app/group/api/internal/types"
-	"ws_chat/app/group/rpc/proto"
-	"ws_chat/common/ctxdata"
+	"wechat-gozero/app/group/api/internal/svc"
+	"wechat-gozero/app/group/api/internal/types"
+	"wechat-gozero/app/group/rpc/proto"
+	"wechat-gozero/common/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,7 +28,7 @@ func NewHandleFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Hand
 func (l *HandleFriendLogic) HandleFriend(req *types.HandleFriendRequest) (*types.HandleFriendResponse, error) {
 	uid := ctxdata.GetUidFromCtx(l.ctx)
 	resp, err := l.svcCtx.GroupRpc.HandleFriend(l.ctx, &proto.HandleFriendRequest{
-		UserId: uid,
+		UserId:  uid,
 		GroupId: req.GroupId,
 		IsAgree: req.IsAgree,
 	})

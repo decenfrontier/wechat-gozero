@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"github.com/wslynn/ws_chat/app/group/rpc/proto"
-	"github.com/wslynn/ws_chat/app/user/rpc/internal/logic"
-	"github.com/wslynn/ws_chat/app/user/rpc/internal/svc"
+	"github.com/wslynn/wechat-gozero/app/group/rpc/proto"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/logic"
+	"github.com/wslynn/wechat-gozero/app/user/rpc/internal/svc"
 )
 
 type UserClientServer struct {

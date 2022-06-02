@@ -1,6 +1,6 @@
 syntax = "proto3";
 package user;
-option go_package = "github.com/wslynn/ws_chat/proto/user";
+option go_package = "github.com/wslynn/wechat-gozero/proto/user";
 
 // 注册
 message RegisterRequest {

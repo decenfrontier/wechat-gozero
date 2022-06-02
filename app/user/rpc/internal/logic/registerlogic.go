@@ -3,14 +3,14 @@ package logic
 import (
 	"context"
 
-	modelMsg "ws_chat/app/message/model"
-	"ws_chat/app/user/model"
-	"ws_chat/app/user/rpc/internal/svc"
-	"ws_chat/app/user/rpc/proto"
-	"ws_chat/common/biz"
-	"ws_chat/common/utils"
-	"ws_chat/common/xcrypt"
-	"ws_chat/common/xerr"
+	modelMsg "wechat-gozero/app/message/model"
+	"wechat-gozero/app/user/model"
+	"wechat-gozero/app/user/rpc/internal/svc"
+	"wechat-gozero/app/user/rpc/proto"
+	"wechat-gozero/common/biz"
+	"wechat-gozero/common/utils"
+	"wechat-gozero/common/xcrypt"
+	"wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -55,10 +55,10 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 	}
 	// 创建用户
 	user := model.User{
-		NickName:   in.NickName,
-		Gender:     in.Gender,
-		Email:      in.Email,
-		Password:   in.Password,
+		NickName: in.NickName,
+		Gender:   in.Gender,
+		Email:    in.Email,
+		Password: in.Password,
 	}
 	// 创建事务
 	err = l.svcCtx.UserModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -90,11 +90,11 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 		var senderId int64 = 1
 		groupId := biz.GetGroupId(senderId, user_id)
 		chatMsg := &modelMsg.ChatMsg{
-			GroupId: groupId,
+			GroupId:  groupId,
 			SenderId: senderId,
-			Type: modelMsg.MsgTypeText,
-			Content: modelMsg.MsgSayHello,
-			Uuid: utils.GenUuid(),
+			Type:     modelMsg.MsgTypeText,
+			Content:  modelMsg.MsgSayHello,
+			Uuid:     utils.GenUuid(),
 		}
 		_, err = l.svcCtx.ChatMsgModel.TransInsert(ctx, session, chatMsg)
 		if err != nil {
@@ -111,11 +111,11 @@ func (l *RegisterLogic) Register(in *proto.RegisterRequest) (*proto.RegisterResp
 			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR),
 				"register say hello2 failed, chatMsg:%+v, err: %v", chatMsg, err)
 		}
-		return nil  // commit
+		return nil // commit
 	})
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &proto.RegisterResponse{}, nil
 }

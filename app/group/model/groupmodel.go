@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"ws_chat/common/biz"
+	"wechat-gozero/common/biz"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -31,8 +31,6 @@ func NewGroupModel(conn sqlx.SqlConn, c cache.CacheConf) GroupModel {
 		defaultGroupModel: newGroupModel(conn, c),
 	}
 }
-
-
 
 // 添加系统用户 组
 func (m *defaultGroupModel) TransInsertSystemGroup(ctx context.Context, session sqlx.Session, userId int64) (sql.Result, error) {

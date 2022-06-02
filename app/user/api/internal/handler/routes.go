@@ -4,7 +4,7 @@ package handler
 import (
 	"net/http"
 
-	"ws_chat/app/user/api/internal/svc"
+	"wechat-gozero/app/user/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )

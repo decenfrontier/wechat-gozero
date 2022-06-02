@@ -1,8 +1,8 @@
-# ws_chat即时通信系统
+# wechat-gozero即时通信系统
 
 ![Go](https://img.shields.io/badge/Go-1.18-blue.svg)
 ![go-zero](https://img.shields.io/badge/go_zero-1.3.3-blue.svg)
-![star](https://img.shields.io/github/stars/wslynn/ws_chat?style=social)
+![star](https://img.shields.io/github/stars/wslynn/wechat-gozero?style=social)
 
 
 ## 1 项目简介
@@ -17,9 +17,9 @@
 
 
 ## 2 相关开源地址
-后端开源地址：https://github.com/wslynn/ws_chat
+后端开源地址：https://github.com/wslynn/wechat-gozero
 
-前端开源地址：https://github.com/wslynn/ws_chat_flutter
+前端开源地址：https://github.com/wslynn/wechat-gozero_flutter
 
 
 ## 3 架构图及文档
@@ -44,4 +44,4 @@ app/user/api/**/*.go {
 }
 ```
 ### (3) 运行modd
-> root@tencent:~/code/ws_chat (master) # modd
+> root@tencent:~/code/wechat-gozero (master) # modd

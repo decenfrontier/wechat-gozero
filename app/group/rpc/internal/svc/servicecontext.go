@@ -1,10 +1,10 @@
 package svc
 
 import (
-	modelGroup "ws_chat/app/group/model"
-	modelUser "ws_chat/app/user/model"
-	modelMsg "ws_chat/app/message/model"
-	"ws_chat/app/group/rpc/internal/config"
+	modelGroup "wechat-gozero/app/group/model"
+	"wechat-gozero/app/group/rpc/internal/config"
+	modelMsg "wechat-gozero/app/message/model"
+	modelUser "wechat-gozero/app/user/model"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
