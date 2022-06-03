@@ -45,6 +45,7 @@ func (l *PersonalInfoLogic) PersonalInfo(in *user.PersonalInfoRequest) (*user.Pe
 	}
 	var resp user.PersonalInfoResponse
 	copier.Copy(&resp, userModel)
+	resp.UserId = userModel.Id
 	resp.AvatarUrl = avatarUrl
 	return &resp, nil
 }
