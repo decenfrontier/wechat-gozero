@@ -37,6 +37,11 @@ func (s *GroupClientServer) GroupUserList(ctx context.Context, in *group.GroupUs
 	return l.GroupUserList(in)
 }
 
+func (s *GroupClientServer) UserGroupList(ctx context.Context, in *group.UserGroupListRequest) (*group.UserGroupListResponse, error) {
+	l := logic.NewUserGroupListLogic(ctx, s.svcCtx)
+	return l.UserGroupList(in)
+}
+
 func (s *GroupClientServer) MessageGroupInfoList(ctx context.Context, in *group.MessageGroupInfoListRequest) (*group.MessageGroupInfoListResponse, error) {
 	l := logic.NewMessageGroupInfoListLogic(ctx, s.svcCtx)
 	return l.MessageGroupInfoList(in)

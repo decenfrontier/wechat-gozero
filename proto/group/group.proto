@@ -32,6 +32,14 @@ message GroupUserListResponse {
     repeated int64 list=1;
 }
 
+// 获取用户的群列表
+message UserGroupListRequest {
+    int64 userId=1;
+}
+message UserGroupListResponse {
+    repeated string list=1;
+}
+
 // 获取消息页面 群组信息列表
 message MessageGroupInfoListRequest {
     int64 userId=1;
@@ -50,5 +58,6 @@ service GroupClient {
     rpc AddFriend(AddFriendRequest) returns(AddFriendResponse);
     rpc HandleFriend(HandleFriendRequest) returns(HandleFriendResponse);
     rpc GroupUserList(GroupUserListRequest) returns(GroupUserListResponse);
+    rpc UserGroupList(UserGroupListRequest) returns(UserGroupListResponse);
     rpc MessageGroupInfoList(MessageGroupInfoListRequest) returns(MessageGroupInfoListResponse);
 }

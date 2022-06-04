@@ -3,7 +3,6 @@ package logic
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -13,6 +12,7 @@ import (
 	"github.com/wslynn/wechat-gozero/common/biz"
 	"github.com/wslynn/wechat-gozero/common/ctxdata"
 	"github.com/wslynn/wechat-gozero/common/xerr"
+	pbgroup "github.com/wslynn/wechat-gozero/proto/group"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-queue/kq"
@@ -21,11 +21,9 @@ import (
 
 var lock sync.Mutex
 
-// 存放groupId和group的映射关系
-var groupMap = make(map[string]*Group)
+// 存放groupId对应的group, groupId:*Group
+var globalGroupMap = make(map[string]*Group)
 
-// 存放group下的所有在线用户, groupId:[]*Client
-var groupUserMap sync.Map
 
 const (
 	// 向客户端写入数据的超时时间
@@ -40,8 +38,8 @@ const (
 	// 每条消息的最大字节数
 	maxMessageSize = 512
 
-	// 最多缓存 待发送的256条消息
-	bufSize = 256
+	// 最多缓存 待发送的10条消息
+	bufSize = 10
 )
 
 var upgrader = websocket.Upgrader{
@@ -64,12 +62,12 @@ type Group struct {
 }
 
 func GetInstanceGroup(groupId string) *Group {
-	group := groupMap[groupId]
+	group := globalGroupMap[groupId]
 	// 双重检 + 互斥锁, 确保多个goroutine同时访问时不会创建多个该Group的实例对象
 	if group == nil {
 		lock.Lock()
 		defer lock.Unlock()
-		if groupMap[groupId] == nil {
+		if globalGroupMap[groupId] == nil {
 			// 开始创建实例时, 一般是该群有新消息上传
 			group = &Group{
 				id:            groupId,
@@ -78,13 +76,8 @@ func GetInstanceGroup(groupId string) *Group {
 				onEnter:       make(chan *Client),
 				onLeave:       make(chan *Client),
 			}
-			// 把所有在该群的在线用户都加入该群
-			onlineClients, ok := groupUserMap.Load(groupId)
-			if ok {
-				for _, client := range onlineClients.([]*Client) {
-					group.onEnter <- client
-				}
-			}
+			// 把该群组加到全局map中
+			globalGroupMap[groupId] = group
 			go group.Run() // 只在创建时运行, 可以保证只运行一次
 		}
 	}
@@ -97,12 +90,6 @@ func (g *Group) Run() {
 		case client := <-g.onEnter:
 			fmt.Printf("group handle onEnter, client:%+v\n", client)
 			g.onlineClients[client] = true
-			onlineClients, ok := groupUserMap.Load(g.id)
-			if !ok {
-				onlineClients = []*Client{}
-			}
-			onlineClients = append(onlineClients.([]*Client), client)
-			groupUserMap.Store(g.id, onlineClients)
 		case client := <-g.onLeave:
 			if _, ok := g.onlineClients[client]; ok {
 				delete(g.onlineClients, client)
@@ -156,7 +143,7 @@ func (c *Client) readPump(svc *svc.ServiceContext) {
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	// 从MQ中取出消息
 	q, err := kq.NewQueue(svc.Config.MqConf, kq.WithHandle(func(key, message string) error {
-		logx.Info("从MQ中取出消息:", key, message)
+		fmt.Printf("从mq消费到消息:%s\n", message)
 		// 先反序列化, 取出里面的groupId
 		msgBytes := []byte(message)
 		var chatMsg types.ChatMsg
@@ -230,34 +217,40 @@ func ServeWs(svc *svc.ServiceContext, w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return xerr.NewErrCodeMsg(xerr.WS_ERROR, "websocket upgrade failed")
 	}
-	// 用户默认加入系统通知群组(以0_uid标识), 其它群组等有消息发来再创建
+	// 用户默认加入系统通知群组(以0_uid标识)
 	ctx := r.Context()
-	platform, ok := ctx.Value("platform").(string)
-	if !ok {
+	platform := r.Header.Get("platform")
+	if platform == "" {
 		return xerr.NewErrCodeMsg(xerr.WS_ERROR, "platform is not string")
 	}
 	uid := ctxdata.GetUidFromCtx(ctx)
-	groupId := biz.GetGroupId(0, uid)
-	group := GetInstanceGroup(groupId)
+	// 获取用户的所有群组
+	resp, err := svc.GroupRpc.UserGroupList(ctx, &pbgroup.UserGroupListRequest{UserId: uid})
+	if err != nil {
+		return err
+	}
+	// 构造client
+	groupMap := map[string]*Group{}
 	idPlatform := fmt.Sprintf("%d_%s", uid, platform)
 	client := &Client{
 		idPlatform: idPlatform,
-		groupMap:   map[string]*Group{groupId: group},
+		groupMap:   groupMap,
 		conn:       conn,
 		onSend:     make(chan []byte, bufSize),
 	}
-
-	logx.Infof("客户端连接, client:%+v", client)
+	fmt.Printf("客户端连接, client:%+v\n", client)
 	// 用户进入群组
-	group.onEnter <- client
-
+	userGroupIdList := append(resp.List, biz.GetGroupId(0, uid))
+	for _, groupId := range userGroupIdList {
+		group := GetInstanceGroup(groupId)
+		groupMap[groupId] = group
+		group.onEnter <- client
+	}
+	// 设置client的groupMap
+	client.groupMap = groupMap
 	// 开启读取和写入协程
 	go client.writePump()
 	go client.readPump(svc)
 	return nil
 }
 
-func MqConsumeHandler(key, value string) error {
-	log.Println("key:", key, "value:", value)
-	return nil
-}

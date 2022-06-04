@@ -22,11 +22,14 @@ type (
 	MessageGroupInfo             = group.MessageGroupInfo
 	MessageGroupInfoListRequest  = group.MessageGroupInfoListRequest
 	MessageGroupInfoListResponse = group.MessageGroupInfoListResponse
+	UserGroupListRequest         = group.UserGroupListRequest
+	UserGroupListResponse        = group.UserGroupListResponse
 
 	GroupClient interface {
 		AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*AddFriendResponse, error)
 		HandleFriend(ctx context.Context, in *HandleFriendRequest, opts ...grpc.CallOption) (*HandleFriendResponse, error)
 		GroupUserList(ctx context.Context, in *GroupUserListRequest, opts ...grpc.CallOption) (*GroupUserListResponse, error)
+		UserGroupList(ctx context.Context, in *UserGroupListRequest, opts ...grpc.CallOption) (*UserGroupListResponse, error)
 		MessageGroupInfoList(ctx context.Context, in *MessageGroupInfoListRequest, opts ...grpc.CallOption) (*MessageGroupInfoListResponse, error)
 	}
 
@@ -54,6 +57,11 @@ func (m *defaultGroupClient) HandleFriend(ctx context.Context, in *HandleFriendR
 func (m *defaultGroupClient) GroupUserList(ctx context.Context, in *GroupUserListRequest, opts ...grpc.CallOption) (*GroupUserListResponse, error) {
 	client := group.NewGroupClientClient(m.cli.Conn())
 	return client.GroupUserList(ctx, in, opts...)
+}
+
+func (m *defaultGroupClient) UserGroupList(ctx context.Context, in *UserGroupListRequest, opts ...grpc.CallOption) (*UserGroupListResponse, error) {
+	client := group.NewGroupClientClient(m.cli.Conn())
+	return client.UserGroupList(ctx, in, opts...)
 }
 
 func (m *defaultGroupClient) MessageGroupInfoList(ctx context.Context, in *MessageGroupInfoListRequest, opts ...grpc.CallOption) (*MessageGroupInfoListResponse, error) {
