@@ -29,8 +29,7 @@ func main() {
 	defer server.Stop()
 
 	handler.RegisterHandlers(server, ctx)
-	// 禁用显示cpu
-	logx.DisableStat()
+	logx.DisableStat()  // 禁用显示cpu
 	// http升级为websocket
 	server.AddRoute(
 		rest.Route{
@@ -43,6 +42,8 @@ func main() {
 		},
 		rest.WithJwt(ctx.Config.JwtAuth.AccessSecret),
 	)
+	// 开启协程, 专门从MQ中获取消息, 发给对应的群
+	go logic.ConsumeMsgFromMQ(ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

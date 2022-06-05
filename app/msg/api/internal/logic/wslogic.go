@@ -24,7 +24,6 @@ var lock sync.Mutex
 // 存放groupId对应的group, groupId:*Group
 var globalGroupMap = make(map[string]*Group)
 
-
 const (
 	// 向客户端写入数据的超时时间
 	writeWait = 10 * time.Second
@@ -87,27 +86,21 @@ func GetInstanceGroup(groupId string) *Group {
 func (g *Group) Run() {
 	for {
 		select {
-		case client := <-g.onEnter:
+		case client := <-g.onEnter:  // 刚刚上线
 			fmt.Printf("group handle onEnter, client:%+v\n", client)
 			g.onlineClients[client] = true
-		case client := <-g.onLeave:
-			if _, ok := g.onlineClients[client]; ok {
-				delete(g.onlineClients, client)
-				close(client.onSend)
-				// 群聊中没有人在线,
-				if len(g.onlineClients) == 0 {
-					return
-				}
-			}
-		case message := <-g.broadcast:
+
+		case client := <-g.onLeave:  // 刚刚离线
+			delete(g.onlineClients, client)
+
+		case message := <-g.broadcast: // 有新消息上传
 			for client := range g.onlineClients {
 				select {
 				case client.onSend <- message:
 					fmt.Println("推送消息给客户端1")
 				default:
-					fmt.Println("客户端缓存满了, 丢弃消息")
-					close(client.onSend)
-					delete(g.onlineClients, client)
+					fmt.Println("客户端缓存满了, 可能是连接异常, 让客户端离线")
+					g.onLeave <- client
 				}
 			}
 		}
@@ -116,32 +109,14 @@ func (g *Group) Run() {
 
 // 客户端在服务端的代表
 type Client struct {
-	// id+platform
-	idPlatform string
-
-	// 客户端的所有群, key是groupId
-	groupMap map[string]*Group
-
-	// websocket 连接对象
-	conn *websocket.Conn
-
-	// 消息数组, 待发送给ws连接的真正客户端
-	onSend chan []byte
+	idPlatform string  // id+platform
+	groupMap map[string]*Group  // 客户端的所有群, key是groupId
+	conn *websocket.Conn  // websocket 连接对象
+	onSend chan []byte  // 消息数组, 待发送给ws连接的真正客户端
 }
 
-// 从MQ中取出客户端上传的消息, 放到该群的广播队列中
-func (c *Client) readPump(svc *svc.ServiceContext) {
-	fmt.Println("readPump")
-	defer func() {
-		for _, group := range c.groupMap {
-			group.onLeave <- c
-		}
-		c.conn.Close()
-	}()
-	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-	// 从MQ中取出消息
+// 从MQ中取出消息
+func ConsumeMsgFromMQ(svc *svc.ServiceContext) {
 	q, err := kq.NewQueue(svc.Config.MqConf, kq.WithHandle(func(key, message string) error {
 		fmt.Printf("从mq消费到消息:%s\n", message)
 		// 先反序列化, 取出里面的groupId
@@ -158,14 +133,35 @@ func (c *Client) readPump(svc *svc.ServiceContext) {
 		return nil
 	}))
 	if err != nil {
-		logx.Errorf("【RPC-SRV-ERR】kq.NewQueue failed c.groupMap:%+v, err: %+v", c.groupMap, err)
+		logx.Errorf("【RPC-SRV-ERR】kq.NewQueue failed mqConf:%+v, err: %+v", svc.Config.MqConf, err)
 	}
 	defer func() {
-		fmt.Printf("取消订阅, c.groupMap:%+v\n", c.groupMap)
 		q.Stop()
+		logx.Infof("【RPC-SRV-INFO】kq.Stop")
 	}()
-	q.Start()
-	fmt.Printf("开始订阅, c.groupMap:%+v\n", c.groupMap)
+	q.Start() // 这句会阻塞执行
+}
+
+// 从MQ中取出客户端上传的消息, 放到该群的广播队列中
+func (c *Client) readPump(svc *svc.ServiceContext) {
+	fmt.Println("readPump")
+	defer func() {
+		for _, group := range c.groupMap {
+			group.onLeave <- c
+		}
+		c.conn.Close()
+	}()
+	c.conn.SetReadLimit(maxMessageSize)
+	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	for {
+		_, msg, err := c.conn.ReadMessage()
+		if err != nil {
+			logx.Infof("【RPC-SRV-INFO】client %s disconnect, reason: %+v", c.idPlatform, err)
+			break
+		}
+		fmt.Println("readPump msg:", string(msg))  // ws消息不做其它处理, 因为消息是通过http上传的
+	}
 }
 
 // 向客户端的wsConn中写入数据
@@ -217,8 +213,9 @@ func ServeWs(svc *svc.ServiceContext, w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return xerr.NewErrCodeMsg(xerr.WS_ERROR, "websocket upgrade failed")
 	}
-	// 用户默认加入系统通知群组(以0_uid标识)
+	// 获取上下文对象
 	ctx := r.Context()
+	// 获取 平台号 和 uid
 	platform := r.Header.Get("platform")
 	if platform == "" {
 		return xerr.NewErrCodeMsg(xerr.WS_ERROR, "platform is not string")
@@ -239,7 +236,7 @@ func ServeWs(svc *svc.ServiceContext, w http.ResponseWriter, r *http.Request) er
 		onSend:     make(chan []byte, bufSize),
 	}
 	fmt.Printf("客户端连接, client:%+v\n", client)
-	// 用户进入群组
+	// 用户进入群组, 默认加入系统通知群组(以0_uid标识)
 	userGroupIdList := append(resp.List, biz.GetGroupId(0, uid))
 	for _, groupId := range userGroupIdList {
 		group := GetInstanceGroup(groupId)
@@ -253,4 +250,3 @@ func ServeWs(svc *svc.ServiceContext, w http.ResponseWriter, r *http.Request) er
 	go client.readPump(svc)
 	return nil
 }
-
