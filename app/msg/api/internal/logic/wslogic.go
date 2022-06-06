@@ -66,7 +66,8 @@ func GetInstanceGroup(groupId string) *Group {
 	if group == nil {
 		lock.Lock()
 		defer lock.Unlock()
-		if globalGroupMap[groupId] == nil {
+		group = globalGroupMap[groupId]
+		if group == nil {
 			// 开始创建实例时, 一般是该群有新消息上传
 			group = &Group{
 				id:            groupId,
