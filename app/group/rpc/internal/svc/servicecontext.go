@@ -6,6 +6,7 @@ import (
 	modelMsg "github.com/wslynn/wechat-gozero/app/msg/model"
 	modelUser "github.com/wslynn/wechat-gozero/app/user/model"
 
+	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -15,6 +16,7 @@ type ServiceContext struct {
 	GroupUserModel modelGroup.GroupUserModel
 	UserModel      modelUser.UserModel
 	ChatMsgModel   modelMsg.ChatMsgModel
+	MqProducer   *kq.Pusher
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -25,5 +27,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GroupUserModel: modelGroup.NewGroupUserModel(sqlConn, c.Cache),
 		UserModel:      modelUser.NewUserModel(sqlConn, c.Cache),
 		ChatMsgModel:   modelMsg.NewChatMsgModel(sqlConn, c.Cache),
+		MqProducer: kq.NewPusher(c.MqConf.Brokers, c.MqConf.Topic),
 	}
 }

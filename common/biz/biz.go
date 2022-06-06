@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // 由两个uid拼接双方的对话组id
@@ -46,4 +48,10 @@ func RandStr(length int) string {
 		result = append(result, bytes[rand.Intn(len(bytes))])
 	}
 	return string(result)
+}
+
+// 获取uuid
+func GetUuid() string {
+	uuid := uuid.New()
+	return uuid.String()
 }

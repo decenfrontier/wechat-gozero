@@ -3,12 +3,15 @@ package logic
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/wslynn/wechat-gozero/app/group/model"
 	"github.com/wslynn/wechat-gozero/app/group/rpc/internal/svc"
-	"github.com/wslynn/wechat-gozero/proto/group"
 	"github.com/wslynn/wechat-gozero/common/biz"
 	"github.com/wslynn/wechat-gozero/common/xerr"
+	"github.com/wslynn/wechat-gozero/common/xmq"
+	"github.com/wslynn/wechat-gozero/proto/group"
+	"github.com/wslynn/wechat-gozero/proto/msg"
 
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -53,6 +56,19 @@ func (l *AddFriendLogic) AddFriend(in *group.AddFriendRequest) (*group.AddFriend
 	})
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "AddFriend insert group failed: %v", err)
+	}
+	// 加好友请求消息 放入消息队列
+	chatMsg := &msg.ChatMsg{
+		GroupId: groupId,
+		SenderId: fromUid,
+		Type: 0,
+		Content: "请求加你为好友",
+		Uuid: biz.GetUuid(),
+		CreateTime: time.Now().UnixMilli(),
+	}
+	err = xmq.PushToMq(l.svcCtx.MqProducer, chatMsg)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "AddFriend push to mq failed: %v", err)
 	}
 	return &group.AddFriendResponse{
 		GroupId: groupId,
