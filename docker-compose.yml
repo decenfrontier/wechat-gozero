@@ -1,19 +1,17 @@
 version: '3'
 
-######## 项目依赖的环境，启动项目之前要先启动此环境 #######
-
 services:
   mysql:
     # 关系型数据库
     image: mysql:8.0.26
-    container_name: mysql_ws
+    container_name: mysql_wechat
     environment:
       # 时区上海
       TZ: Asia/Shanghai
       # root 密码
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       # 创建一个数据库
-      MYSQL_DATABASE: "github.com/wslynn/wechat-gozero"
+      MYSQL_DATABASE: "wechat-gozero"
     ports:
       - 3306:3306
     volumes:
@@ -29,7 +27,7 @@ services:
   redis:
     # 缓存
     image: redis:6.2.5
-    container_name: redis_ws
+    container_name: redis_wechat
     ports:
       - 6379:6379
     environment:
