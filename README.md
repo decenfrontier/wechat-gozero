@@ -19,10 +19,15 @@
 ## 2 相关开源地址
 后端开源地址：https://github.com/wslynn/wechat-gozero
 
-前端开源地址：https://github.com/wslynn/wechat-flutter
+前端开源地址：https://github.com/wslynn/wechat_flutter
 
 
 ## 3 架构图及文档
 [语雀在线文档](https://www.yuque.com/docs/share/77c846d2-51f8-4a25-8330-fa036a8a4cbe)
 
 [![OZycv9.png](https://s1.ax1x.com/2022/05/05/OZycv9.png)](https://imgtu.com/i/OZycv9)
+
+
+## 4 常见问题及解决方案
+### (1) elasticsearcj容器报错nested: AccessDeniedException[/usr/share/elasticsearch/data/nodes]
+解决: chmod 777 data/elasticsearch/**
