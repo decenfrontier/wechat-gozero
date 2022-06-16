@@ -13,7 +13,9 @@
 
 为了一套代码支持全平台和便捷的状态管理，前端使用Flutter+GetX开发。
 
-都是比较新的技术栈, 网上参考资料不多, 一步步做到现在不容易, 欢迎大家点个star, 有时间会更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
+都是比较新的技术栈, 网上参考资料不多, 一步步做到现在不容易, 如果对您有帮助, 请点个star支持一下 
+
+有时间会继续更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
 
 
 ## 2 相关开源地址
@@ -25,9 +27,9 @@
 ## 3 架构图及文档
 [语雀在线文档](https://www.yuque.com/docs/share/77c846d2-51f8-4a25-8330-fa036a8a4cbe)
 
-[![OZycv9.png](https://s1.ax1x.com/2022/05/05/OZycv9.png)](https://imgtu.com/i/OZycv9)
-
+[![XbPYqA.png](https://s1.ax1x.com/2022/06/16/XbPYqA.png)](https://imgtu.com/i/XbPYqA)
 
 ## 4 常见问题及解决方案
 ### (1) elasticsearcj容器报错nested: AccessDeniedException[/usr/share/elasticsearch/data/nodes]
-解决: chmod 777 data/elasticsearch/**
+解决: 
+> chmod 777 data/elasticsearch/**
