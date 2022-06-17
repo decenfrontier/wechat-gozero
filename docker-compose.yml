@@ -128,7 +128,7 @@ services:
       - 9093:9093
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=kafka0
-      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_DELETE_TOPIC_ENABLE=true
       - KAFKA_BROKER_ID=0
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -150,7 +150,7 @@ services:
       - 9094:9094
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=kafka1
-      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_DELETE_TOPIC_ENABLE=true
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
