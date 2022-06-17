@@ -7,15 +7,24 @@
 
 
 ## 1 项目简介
-本项目的目标是利用websocket, kafka等技术, 模仿微信UI开发一个IM系统, 实现消息单聊, 群聊, 在线推送, 离线拉取等功能
+本项目的目标是模仿微信UI开发一个IM系统, 实现消息单聊, 群聊, 在线推送, 离线拉取等功能
 
 为了提升开发和重构效率，后端使用go-zero微服务框架。
 
 为了一套代码支持全平台和便捷的状态管理，前端使用Flutter+GetX开发。
 
-都是比较新的技术栈, 网上参考资料不多, 一步步做到现在不容易, 如果对您有帮助, 请点个star支持一下 
+都是比较新的技术栈, 如果对您有帮助, 请点个star支持一下
 
-有时间会继续更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
+现已实现单聊功能, 不过加好友之类的是通过apipost实现的, 前端页面还没开发完
+
+这是接下来的开发计划：
+- 加好友, 同意好友请求的前端页面开发
+- 搜索用户
+- 查看用户信息
+- 获取好友列表
+- 发起群聊
+
+空闲时间会继续更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
 
 
 ## 2 相关开源地址
@@ -25,9 +34,12 @@
 
 
 ## 3 架构图及文档
+### (1) 架构图
+[![XbgESH.png](https://s1.ax1x.com/2022/06/17/XbgESH.png)](https://imgtu.com/i/XbgESH)
+### (2) 文档
 [语雀在线文档](https://www.yuque.com/docs/share/77c846d2-51f8-4a25-8330-fa036a8a4cbe)
-
-[![XbPYqA.png](https://s1.ax1x.com/2022/06/16/XbPYqA.png)](https://imgtu.com/i/XbPYqA)
+### (3) API接口文档
+[ApiPost接口文档](https://console-docs.apipost.cn/preview/6c245af8bcc075c4/42820335d3df842c)
 
 ## 4 常见问题及解决方案
 ### (1) elasticsearcj容器报错nested: AccessDeniedException[/usr/share/elasticsearch/data/nodes]
