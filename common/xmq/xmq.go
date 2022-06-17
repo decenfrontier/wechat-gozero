@@ -3,23 +3,22 @@ package xmq
 import (
 	"encoding/json"
 
+	"github.com/segmentio/kafka-go"
 	"github.com/wslynn/wechat-gozero/common/xerr"
 
 	"github.com/pkg/errors"
-	"github.com/zeromicro/go-queue/kq"
 )
 
 // 生产到消息队列
-func PushToMq(producer *kq.Pusher, object interface{}) error {
+func PushToMq(conn *kafka.Conn, object interface{}) error {
 	jsonBytes, err := json.Marshal(object)
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.MARSHAL_ERROR), "marshal object failed, object: %+v", object)
 	}
-	jsonStr := string(jsonBytes)
 	// 放入消息队列
-	err = producer.Push(jsonStr)
+	_, err = conn.WriteMessages(kafka.Message{Value: jsonBytes})
 	if err != nil {
-		return errors.Wrapf(xerr.NewErrCode(xerr.MQ_ERROR), "push message to mq failed, jsonStr: %s", jsonStr)
+		return errors.Wrapf(xerr.NewErrCode(xerr.MQ_ERROR), "push message to mq failed, object: %+v", object)
 	}
 	return nil
 }

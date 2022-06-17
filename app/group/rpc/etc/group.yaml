@@ -20,10 +20,7 @@ Telemetry:
   Batcher: jaeger
 
 MqConf:
-  Name: wechat-gozero
   Brokers:
     - ${SERVER_IP}:9093
     - ${SERVER_IP}:9094
   Topic: msg_chat
-  Group: group-rpc
-  Consumers: 1

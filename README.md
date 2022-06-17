@@ -41,7 +41,16 @@
 ### (3) API接口文档
 [ApiPost接口文档](https://console-docs.apipost.cn/preview/6c245af8bcc075c4/42820335d3df842c)
 
-## 4 常见问题及解决方案
+## 4 快速开始
+### (1) 下载依赖包
+> go mod tidy
+### (2) 启动环境
+> docker-compose up -d
+### (3) kafka配置
+创建topic, partition, replica
+[![Xq4Rds.png](https://s1.ax1x.com/2022/06/17/Xq4Rds.png)](https://imgtu.com/i/Xq4Rds)
+
+## 5 常见问题及解决方案
 ### (1) elasticsearcj容器报错nested: AccessDeniedException[/usr/share/elasticsearch/data/nodes]
 解决: 
 > chmod 777 data/elasticsearch/**

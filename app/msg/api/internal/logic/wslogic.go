@@ -1,12 +1,14 @@
 package logic
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
 	"time"
 
+	"github.com/segmentio/kafka-go"
 	"github.com/wslynn/wechat-gozero/app/msg/api/internal/svc"
 	"github.com/wslynn/wechat-gozero/app/msg/api/internal/types"
 	"github.com/wslynn/wechat-gozero/common/biz"
@@ -15,7 +17,6 @@ import (
 	pbgroup "github.com/wslynn/wechat-gozero/proto/group"
 
 	"github.com/gorilla/websocket"
-	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -97,7 +98,7 @@ func (g *Group) Run() {
 			for client := range g.onlineClients {
 				select {
 				case client.onSend <- message:
-					fmt.Println("推送消息给客户端1")
+					logx.Info("group send message to client")
 				default:
 					fmt.Println("客户端缓存满了, 可能是连接异常, 让客户端离线")
 					g.onLeave <- client
@@ -117,12 +118,23 @@ type Client struct {
 
 // 从MQ中取出消息
 func ConsumeMsgFromMQ(svc *svc.ServiceContext) {
-	q, err := kq.NewQueue(svc.Config.MqConf, kq.WithHandle(func(key, message string) error {
-		fmt.Printf("从mq消费到消息:%s\n", message)
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers:   svc.Config.MqConf.Brokers,
+		Topic:     svc.Config.MqConf.Topic,
+		GroupID:   svc.Config.MqConf.Group,
+	})
+	for {
+		kfkMsg, err := r.ReadMessage(context.Background())
+		if err != nil {
+			break
+		}
 		// 先反序列化, 取出里面的groupId
-		msgBytes := []byte(message)
+		msgBytes := kfkMsg.Value
+		message := string(msgBytes)
+		logx.Info("从mq消费到消息:%s", message)
+
 		var chatMsg types.ChatMsg
-		err := json.Unmarshal(msgBytes, &chatMsg)
+		err = json.Unmarshal(msgBytes, &chatMsg)
 		if err != nil {
 			logx.Errorf("【RPC-SRV-ERR】json.Unmarshal failed, message:%s, err: %+v", message, err)
 		}
@@ -130,16 +142,10 @@ func ConsumeMsgFromMQ(svc *svc.ServiceContext) {
 		// 再根据groupId找到group, 对group进行广播
 		group := GetInstanceGroup(groupId)
 		group.broadcast <- msgBytes
-		return nil
-	}))
-	if err != nil {
-		logx.Errorf("【RPC-SRV-ERR】kq.NewQueue failed mqConf:%+v, err: %+v", svc.Config.MqConf, err)
 	}
-	defer func() {
-		q.Stop()
-		logx.Infof("【RPC-SRV-INFO】kq.Stop")
-	}()
-	q.Start() // 这句会阻塞执行
+	if err := r.Close(); err != nil {
+		logx.Error("failed to close reader:", err)
+	}
 }
 
 // 从MQ中取出客户端上传的消息, 放到该群的广播队列中
@@ -186,7 +192,6 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			fmt.Println("推送消息给客户端2")
 			w.Write(message)
 
 			// 顺便把所有的消息都发送出去

@@ -66,7 +66,7 @@ func (l *AddFriendLogic) AddFriend(in *group.AddFriendRequest) (*group.AddFriend
 		Uuid: biz.GetUuid(),
 		CreateTime: time.Now().UnixMilli(),
 	}
-	err = xmq.PushToMq(l.svcCtx.MqProducer, chatMsg)
+	err = xmq.PushToMq(l.svcCtx.MqConn, chatMsg)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "AddFriend push to mq failed: %v", err)
 	}

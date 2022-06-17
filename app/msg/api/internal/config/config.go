@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -11,7 +10,11 @@ type Config struct {
 	JwtAuth struct {
 		AccessSecret string
 	}
-	MsgRpc zrpc.RpcClientConf
+	MsgRpc   zrpc.RpcClientConf
 	GroupRpc zrpc.RpcClientConf
-	MqConf kq.KqConf
+	MqConf   struct {
+		Brokers []string
+		Topic   string
+		Group   string
+	}
 }

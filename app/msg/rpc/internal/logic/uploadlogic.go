@@ -57,7 +57,7 @@ func (l *UploadLogic) Upload(in *msg.UploadRequest) (*msg.UploadResponse, error)
 		copier.Copy(&mqMsg, dbMsg)
 		mqMsg.CreateTime = dbMsg.CreateTime.UnixMilli()
 		chatMsg.CreateTime = dbMsg.CreateTime
-		err = xmq.PushToMq(l.svcCtx.MqProducer, &mqMsg)
+		err = xmq.PushToMq(l.svcCtx.MqConn, &mqMsg)
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCodeMsg(xerr.MQ_ERROR, "消息推送失败"), "push message to mq failed, msg: %+v", chatMsg)
 		}
