@@ -23,6 +23,10 @@
 - 查看用户信息
 - 获取好友列表
 - 发起群聊
+- 修改用户信息
+- 修改密码
+- 上传图片和视频到云存储
+- 保存用户在线状态
 
 空闲时间会继续更新, 直至实现微信的大部分功能, 也欢迎各位大佬PR~
 
@@ -43,14 +47,16 @@
 
 ## 4 快速开始
 ### (1) 下载依赖包
-> go mod tidy
+> $ go mod tidy
 ### (2) 启动环境
-> docker-compose up -d
+> $ docker-compose up -d
 ### (3) kafka配置
 创建topic, partition, replica
 [![Xq4Rds.png](https://s1.ax1x.com/2022/06/17/Xq4Rds.png)](https://imgtu.com/i/Xq4Rds)
+### (4) 运行各个微服务
+> $ modd
 
 ## 5 常见问题及解决方案
 ### (1) elasticsearcj容器报错nested: AccessDeniedException[/usr/share/elasticsearch/data/nodes]
 解决: 
-> chmod 777 data/elasticsearch/**
+> $ chmod 777 data/elasticsearch/**
