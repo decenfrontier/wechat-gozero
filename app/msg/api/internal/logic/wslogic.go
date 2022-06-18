@@ -123,8 +123,9 @@ func ConsumeMsgFromMQ(svc *svc.ServiceContext) {
 		Topic:     svc.Config.MqConf.Topic,
 		GroupID:   svc.Config.MqConf.Group,
 	})
+	ctx := context.Background()
 	for {
-		kfkMsg, err := r.ReadMessage(context.Background())
+		kfkMsg, err := r.FetchMessage(ctx)
 		if err != nil {
 			break
 		}
@@ -142,6 +143,11 @@ func ConsumeMsgFromMQ(svc *svc.ServiceContext) {
 		// 再根据groupId找到group, 对group进行广播
 		group := GetInstanceGroup(groupId)
 		group.broadcast <- msgBytes
+		// 处理完后, 再提交offset
+		err = r.CommitMessages(ctx, kfkMsg)
+		if err != nil {
+			logx.Errorf("【RPC-SRV-ERR】CommitMessages failed, err: %+v", err)
+		}
 	}
 	if err := r.Close(); err != nil {
 		logx.Error("failed to close reader:", err)

@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"context"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 	modelGroup "github.com/wslynn/wechat-gozero/app/group/model"
@@ -18,14 +18,15 @@ type ServiceContext struct {
 	GroupUserModel modelGroup.GroupUserModel
 	UserModel      modelUser.UserModel
 	ChatMsgModel   modelMsg.ChatMsgModel
-	MqConn       *kafka.Conn
+	MqWriter     *kafka.Writer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	sqlConn := sqlx.NewMysql(c.Db.DataSource)
-	mqConn, err := kafka.DialLeader(context.TODO(), "tcp", c.MqConf.Brokers[0], c.MqConf.Topic, 0)
-	if err != nil {
-		panic(err)
+	mqWriter := &kafka.Writer{
+		Addr:     kafka.TCP(c.MqConf.Brokers...),
+		Topic:    c.MqConf.Topic,
+		BatchTimeout: time.Millisecond * 20,
 	}
 	return &ServiceContext{
 		Config:         c,
@@ -33,6 +34,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GroupUserModel: modelGroup.NewGroupUserModel(sqlConn, c.Cache),
 		UserModel:      modelUser.NewUserModel(sqlConn, c.Cache),
 		ChatMsgModel:   modelMsg.NewChatMsgModel(sqlConn, c.Cache),
-		MqConn: mqConn,
+		MqWriter: mqWriter,
 	}
 }

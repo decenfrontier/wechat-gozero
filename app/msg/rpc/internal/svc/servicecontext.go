@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"context"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/wslynn/wechat-gozero/app/msg/model"
@@ -15,22 +15,24 @@ type ServiceContext struct {
 	Config       config.Config
 	ChatMsgModel model.ChatMsgModel
 	RedisClient  *redis.Redis
-	MqConn       *kafka.Conn
+	MqWriter     *kafka.Writer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	sqlConn := sqlx.NewMysql(c.Db.DataSource)
-	mqConn, err := kafka.DialLeader(context.TODO(), "tcp", c.MqConf.Brokers[0], c.MqConf.Topic, 0)
-	if err != nil {
-		panic(err)
+	redisClient := redis.New(c.Redis.Host, func(r *redis.Redis) {
+		r.Type = c.Redis.Type
+		r.Pass = c.Redis.Pass
+	})
+	mqWriter := &kafka.Writer{
+		Addr:         kafka.TCP(c.MqConf.Brokers...),
+		Topic:        c.MqConf.Topic,
+		BatchTimeout: time.Millisecond * 20,
 	}
 	return &ServiceContext{
 		Config:       c,
 		ChatMsgModel: model.NewChatMsgModel(sqlConn, c.Cache),
-		RedisClient: redis.New(c.Redis.Host, func(r *redis.Redis) {
-			r.Type = c.Redis.Type
-			r.Pass = c.Redis.Pass
-		}),
-		MqConn: mqConn,
+		RedisClient:  redisClient,
+		MqWriter:     mqWriter,
 	}
 }
