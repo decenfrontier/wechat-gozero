@@ -135,32 +135,32 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${SERVER_IP}:9093
       - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
       - TZ=Asia/Shanghai
-      - KAFKA_LOG_RETENTION_HOURS=8
+      - KAFKA_LOG_RETENTION_HOURS=24
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     
 
   #消息队列
-  # kafka1:
-  #   image: wurstmeister/kafka
-  #   container_name: kafka1
-  #   restart: always
-  #   depends_on:
-  #     - zookeeper
-  #   ports:
-  #     - 9094:9094
-  #   environment:
-  #     - KAFKA_ADVERTISED_HOST_NAME=kafka1
-  #     - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
-  #     - KAFKA_DELETE_TOPIC_ENABLE=true
-  #     - KAFKA_BROKER_ID=1
-  #     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-  #     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${SERVER_IP}:9094
-  #     - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9094
-  #     - TZ=Asia/Shanghai
-  #     - KAFKA_LOG_RETENTION_HOURS=8
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
+  kafka1:
+    image: wurstmeister/kafka
+    container_name: kafka1
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - 9094:9094
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${SERVER_IP}:9094
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9094
+      - TZ=Asia/Shanghai
+      - KAFKA_LOG_RETENTION_HOURS=24
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     
 
   # kafka管理后台
