@@ -15,6 +15,8 @@
 
 都是比较新的技术栈, 如果对您有帮助, 请点个star支持一下
 
+免责声明: 本代码仅供技术交流，请勿用于商业用途
+
 现已实现单聊功能(加好友目前需要通过post请求后端接口实现, 前端页面暂未完成)
 ![784ea66737aaaad8d8e0cb84efdc7b63.gif](https://img.gejiba.com/images/784ea66737aaaad8d8e0cb84efdc7b63.gif)
 
